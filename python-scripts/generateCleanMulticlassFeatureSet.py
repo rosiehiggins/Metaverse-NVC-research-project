@@ -1,14 +1,11 @@
+from createDataset import balance_dataset_by_min
 from createDataset import map_file_to_ranges
 from createDataset import get_feature_data_from_images
 from createDataset import get_feature_data
 import numpy as np
 import pandas as pd
 
-list_test = [1,2,3,\
-            4,5,6,\
-            7,8,9]
 
-print(list_test)
 #
 #build data set from data
 #
@@ -54,13 +51,6 @@ carlos_c_rh_data = get_feature_data_from_images("../training-images/carlos_c/rai
 print("raise hand carlos c")
 print(len(carlos_c_rh_data))
 
-#get frame ranges
-rh_frame_ranges = map_file_to_ranges(pathname="../training-data/subset/raisehand.csv",indexcol="file",\
-                                usecols=["file","start","stop","hand"],dtype={'start': int, 'stop': int,'hand':str})
-rh_data = get_feature_data("../training-videos/raise-hand",rh_frame_ranges,[0,1,0])
-print("raise hand video")
-print(len(rh_data))
-
 
 #
 #thumbs up
@@ -103,25 +93,14 @@ print("thumbs-up carlos c")
 print(len(carlos_c_tu_data))
 
 
-
-
-# #balance thumbs up by randomly removing some
-# remove_n = len(thumbsup_data) - len(rh_data)
-# thumbsup_df = pd.DataFrame(thumbsup_data)
-# drop_indices = np.random.choice(thumbsup_df.index, remove_n, replace=False)
-# thumbsup_sample = thumbsup_df.drop(drop_indices)
-
-# print("thumbs up")
-# print(len(thumbsup_sample.index))
-
 #
 #OK
 #
 
 #get frame ranges
-ok_frame_ranges = map_file_to_ranges(pathname="../training-data/oks.csv",indexcol="file",\
+ok_frame_ranges = map_file_to_ranges(pathname="../training-data/subset/oks.csv",indexcol="file",\
                                 usecols=["file","start","stop","hand"],dtype={'start': int, 'stop': int,'hand':str})
-ok_data = get_feature_data("../training-videos/subset/ok",ok_frame_ranges,[0,0,1])
+ok_data = get_feature_data("../training-videos/ok",ok_frame_ranges,[0,0,1])
 print("ok video")
 print(len(ok_data))
 
@@ -164,6 +143,7 @@ dataset = [*raul_ok_data, *samira_ok_data,*ok_data, *alfredo_ok_data, *ana_ok_da
 #save dataset to csv
 #
 dataset_df = pd.DataFrame(dataset)
+
 dataset_df.sample(frac = 1)
 
 dataset_df.to_csv("../training-data/dataset/dataset_multiclass_features2.csv",index=False)

@@ -1,4 +1,4 @@
-#first attempt at multi-class classifier. Thumbs up and Raise hand
+#multi class, no nons, balanced shuffled dataset
 
 import os
 #manually add dll directories because they can't be found in system path
@@ -29,7 +29,8 @@ def GestureClassifier():
     return model
 
 #load dataset
-df = pd.read_csv("../training-data/dataset/dataset_multiclass_features1_test.csv",dtype=np.float32)
+df = pd.read_csv("../training-data/dataset/dataset_multiclass_features2.csv",dtype=np.float32)
+
 dataset = df.to_numpy()
 #all rows, -1 cols
 X = dataset[:,0:24]
@@ -60,4 +61,4 @@ print("predictions shape:", predictions.shape)
 
 
 model.summary()
-model.save(filepath='../model/gestureClassifierV1/v10/model.h5',)
+model.save(filepath='../model/gestureClassifier/v13/model.h5',)

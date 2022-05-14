@@ -5,7 +5,7 @@ export default class GestureClassifier {
 	
 	constructor(){
         this.modelLoaded = false;
-        tf.loadLayersModel('model/v10/model.json')
+        tf.loadLayersModel('model/v13/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
@@ -126,11 +126,10 @@ export default class GestureClassifier {
             console.log("prediction " + prediction)
             let value = 0
             ///let prediction = 0           
-            if(prediction>0.70){
+            if(prediction>0.50){
                 value = index + 1
-                //value = 1;
-            }
-                
+                console.log("value " + value)
+            }           
             return value;
         }       
         return "Model not loaded"

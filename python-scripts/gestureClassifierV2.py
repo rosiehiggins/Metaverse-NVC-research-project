@@ -54,4 +54,4 @@ print("predictions shape:", predictions.shape)
 #print('Accuracy: %.2f' % (accuracy*100))
 
 model.summary()
-model.save(filepath='../model/gestureClassifierV1/v05/model.h5',)
+model.save(filepath='../model/gestureClassifier/v05/model.h5',)

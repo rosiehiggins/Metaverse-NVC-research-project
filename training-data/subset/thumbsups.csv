@@ -1,6 +1,4 @@
 ﻿file,thumbsupstart,thumbsupstop,hand
-../training-videos/thumbs-up/db_thumbsup.mp4,115,128,Right
-../training-videos/thumbs-up/db_thumbsup.mp4,159,176,Right
 ../training-videos/thumbs-up/gd_thumbsup0.mp4,171,232,Left
 ../training-videos/thumbs-up/gd_thumbsup0.mp4,334,379,Left
 ../training-videos/thumbs-up/gd_thumbsup0.mp4,479,521,Right
@@ -10,7 +8,6 @@
 ../training-videos/thumbs-up/gd_thumbsup2.mp4,186,218,Left
 ../training-videos/thumbs-up/gg_thumbsup.mp4,259,287,Right
 ../training-videos/thumbs-up/gg_thumbsup.mp4,454,487,Left
-../training-videos/thumbs-up/kt_thumbsup1.mp4,642,675,Left
 ../training-videos/thumbs-up/ljh_thumbsup.mp4,39,63,Left
 ../training-videos/thumbs-up/ljh_thumbsup.mp4,114,144,Right
 ../training-videos/thumbs-up/lh_thumbsup.mp4,52,144,Left

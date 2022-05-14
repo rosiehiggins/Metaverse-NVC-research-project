@@ -18,6 +18,16 @@ import math
 import random
 from gestureFeatures import angle_two_vectors
 
+#balance dataset by undersampling
+def balance_dataset_by_min(df):
+    if 'class' in df:
+        g = df.groupby('class')
+        print(g.head())
+        return pd.DataFrame(g.apply(lambda x: x.sample(g.size().min()).reset_index(drop=True)))
+    else:
+        return None
+
+
 def landmark_tonumpy(landmark):
     return np.array([landmark.x,landmark.y,landmark.z])
 
@@ -142,8 +152,6 @@ def landmarks_to_features(landmarks):
 
 
 
-
-
 #flatten landmarks to list
 def landmarks_to_list(landmarks):
     lm_list = []
@@ -221,7 +229,7 @@ def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
     return frame_ranges
 
 #"../test-videos/thumbs-up/*"
-def get_data(path,frame_ranges,data_class):
+def get_data(path,frame_ranges,data_class,class_label=None):
     #load files
     true_files = []
     data = []
@@ -298,6 +306,9 @@ def get_data(path,frame_ranges,data_class):
                             else:
                                 lm_list.append(data_class)
                             
+                            if class_label is not None:
+                                lm_list.append(class_label) 
+                                  
                             #add to dataset
                             data.append(lm_list)
                             count+=1
@@ -312,7 +323,7 @@ def get_data(path,frame_ranges,data_class):
     return data
 
 
-def get_feature_data(path,frame_ranges,data_class):
+def get_feature_data(path,frame_ranges,data_class,class_label=None):
     #load files
     true_files = []
     data = []
@@ -385,7 +396,8 @@ def get_feature_data(path,frame_ranges,data_class):
                                 feature_list = [*feature_list,*data_class]
                             else:
                                 feature_list.append(data_class)
-                            
+                            if class_label is not None:
+                                feature_list.append(class_label)                                
                             #add to dataset
                             data.append(feature_list)
                             count+=1
@@ -403,7 +415,7 @@ def get_feature_data(path,frame_ranges,data_class):
 
 
 
-def get_data_from_images(path,hand,flip_prob,data_class):
+def get_data_from_images(path,hand,flip_prob,data_class,class_label=None):
     #load files
     true_files = []
     data = []
@@ -450,6 +462,9 @@ def get_data_from_images(path,hand,flip_prob,data_class):
                             lm_list = [*lm_list,*data_class]
                         else:
                             lm_list.append(data_class) 
+                        
+                        if class_label is not None:
+                            lm_list.append(class_label)    
                                                 
                         #add to dataset
                         data.append(lm_list)
@@ -459,7 +474,7 @@ def get_data_from_images(path,hand,flip_prob,data_class):
     return data  
 
 
-def get_feature_data_from_images(path,hand,flip_prob,data_class):
+def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None):
     #load files
     true_files = []
     data = []
@@ -506,6 +521,9 @@ def get_feature_data_from_images(path,hand,flip_prob,data_class):
                             feature_list = [*feature_list,*data_class]
                         else:
                             feature_list.append(data_class) 
+
+                        if class_label is not None:
+                            feature_list.append(class_label)
 
                         data.append(feature_list)
                         count+=1
