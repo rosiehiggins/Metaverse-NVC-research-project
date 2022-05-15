@@ -1,5 +1,6 @@
 #multi class, nons added a separate class, balanced shuffled dataset
 #bigger dataset more epoch
+#added a third layer as well
 
 import os
 #manually add dll directories because they can't be found in system path
@@ -32,33 +33,30 @@ def GestureClassifier():
 #load dataset
 df = pd.read_csv("../training-data/dataset/dataset_multiclass_features4.csv",dtype=np.float32)
 
-dataset = df.to_numpy()
+train_dataset = df.to_numpy()
 #all rows, -1 cols
-X = dataset[:,0:24]
-print(X[1:5])
+X_train = train_dataset[:,0:24]
+print(X_train[1:5])
 #all rows, last 4 cols
-Y = dataset[:,-4:]
-print(Y[1:5])
+Y_train = train_dataset[:,-4:]
+print(Y_train[1:5])
 
 #load testset
 t_df = pd.read_csv("../test-data/dataset/test_dataset_multiclass0.csv",dtype=np.float32)
 
-dataset = df.to_numpy()
+test_dataset = t_df.to_numpy()
 #all rows, -1 cols
-X = dataset[:,0:24]
-print(X[1:5])
+X_test = test_dataset[:,0:24]
+print(X_test[1:5])
 #all rows, last 4 cols
-Y = dataset[:,-4:]
-print(Y[1:5])
-
-#Note may load in separate test set here and train on whole dataset
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y,test_size=0.1,random_state=42)
+Y_test = test_dataset[:,-4:]
+print(Y_test[1:5])
 
 #create model
 model = GestureClassifier()
 
 #fit model - look up a good number of epochs and batches
-model.fit(X_train, Y_train, epochs=30, batch_size=10,validation_data=(X_test, Y_test))
+model.fit(X_train, Y_train, epochs=40, batch_size=10,validation_data=(X_test, Y_test))
 
 # Evaluate the model on the test data using `evaluate`
 print("Evaluate on test data")

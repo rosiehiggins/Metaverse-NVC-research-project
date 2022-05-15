@@ -108,8 +108,8 @@ class Main extends React.Component {
                     this.handstimes = [];
                 }
             },
-            width: 1280,
-            height: 720
+            width: 720,
+            height: 438
         });
 
         this.camera.start()
@@ -150,7 +150,7 @@ class Main extends React.Component {
                             prediction = this.GestureHeuristics.predict(landmarks,hand);
                         }
                         else if(this.state.modeltype === "NeuralNetwork"){
-                            //this.GestureClassifier.predict(landmarks,hand);
+                            //todo make this an async function so prediction can happen async and improve performance
                             prediction = this.GestureClassifier.predict(landmarks,hand);
                         }
 
@@ -199,10 +199,10 @@ class Main extends React.Component {
 
 	render() {		
 		return (
-            <Box sx={{ p: 2, border: '1px dashed grey',display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
-                <div style={{position:'relative', width:"1280px", height:"720px", margin:10 ,border: '1px solid grey'}}>
+            <Box sx={{ p: 2, display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+                <div style={{position:'relative', width:"720px", height:"438px", margin:10 ,border: '1px solid grey'}}>
                     <video ref={this.videoRef} style={{position:'absolute',width:"100%",height:"100%", transform: this.state.selfieMode ? "scale(-1, 1)" : "scale(1,1)"}}/>               
-                    <canvas ref={this.canvasRef} width={1280} height={720} style={{position:'absolute',width:"100%",height:"100%"}}/>
+                    <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>
                 </div>
                 <Box sx={{display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"row"}}>
                     <Button sx={{mx:2}} onClick = {()=>{this.toggleInference()}} variant="contained">{this.state.inferring ? "Hide keypoints" : "Show keypoints"}</Button>
