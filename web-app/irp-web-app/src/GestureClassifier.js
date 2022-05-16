@@ -31,9 +31,9 @@ export default class GestureClassifier {
         let i = 0
         for (const landmark of landmarks){
             if(i!==0){
-                lms.push((landmark.x-trans.x)*scalingFactor)
-                lms.push((landmark.y-trans.y)*scalingFactor)
-                lms.push((landmark.z-trans.z)*scalingFactor)
+                lms.push((landmark.x-trans.x)*scalingFactor);
+                lms.push((landmark.y-trans.y)*scalingFactor);
+                lms.push((landmark.z-trans.z)*scalingFactor);
             }  
             i++;
         }
@@ -112,26 +112,20 @@ export default class GestureClassifier {
     }
 
     predict(landmarks,hand){
-        if (this.modelLoaded){
-            //return gesture prediction
-            let inputTensor = this.convertLandmarksToFeatures(landmarks,hand);
-            //console.log(this.model)
-            let resultTensor = this.model.predict(inputTensor);
-            //data() method is async - will use this in prod version but will stay async for now
-            let result = resultTensor.dataSync();
-            console.log("result " + result)
+        if(!this.modelLoaded)
+         return Promise.resolve(null);
+        //return gesture prediction
+        let inputTensor = this.convertLandmarksToFeatures(landmarks,hand);
+        let resultTensor = this.model.predict(inputTensor);
+        return resultTensor.data()
+        .then((result)=>{
             let prediction = Math.max(result[0],result[1],result[2])
-            //let prediction = result[0];
             let index = result.indexOf(prediction)
-            console.log("prediction " + prediction)
-            let value = 0
-            ///let prediction = 0           
-            if(prediction>0.60){
-                value = index + 1
-                console.log("value " + value)
-            }           
+            let value = 0         
+            if(prediction>0.60)
+                value = index + 1;
+                      
             return value;
-        }       
-        return "Model not loaded"
+        });
     }
 }
