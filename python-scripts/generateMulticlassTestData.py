@@ -26,6 +26,10 @@ lorena_thumbsup_data = get_feature_data_from_images("../test-images/lorena/thumb
 print("lorena thumbs up")
 print(len(lorena_thumbsup_data))
 
+federico_thumbsup_data = get_feature_data_from_images("../test-images/federico/thumbs-up","Left",0.5,[1,0,0,0])
+print("federico thumbs up")
+print(len(federico_thumbsup_data))
+
 #
 #raise hand
 #get data from https://sites.google.com/view/handgesturedb/home
@@ -40,6 +44,10 @@ print(len(susana_rh_data))
 lorena_rh_data = get_feature_data_from_images("../test-images/lorena/raise-hand","Left",0.5,[0,1,0,0])
 print("lorena raise hand")
 print(len(lorena_rh_data))
+
+federico_rh_data = get_feature_data_from_images("../test-images/federico/raise-hand","Left",0.5,[0,1,0,0])
+print("federico raise hand")
+print(len(federico_rh_data))
 
 #
 #ok
@@ -56,6 +64,9 @@ lorena_ok_data = get_feature_data_from_images("../test-images/lorena/ok","Left",
 print("lorena ok")
 print(len(lorena_ok_data))
 
+federico_ok_data = get_feature_data_from_images("../test-images/federico/ok","Left",0.5,[0,0,1,0])
+print("federico ok")
+print(len(federico_ok_data))
 
 
 #
@@ -71,12 +82,12 @@ print("non gesture")
 print(len(nongesture_data))
 
 #concatenate all lists into a dataset
-dataset = [*alberto_thumbsup_data, *susana_thumbsup_data, *lorena_thumbsup_data,\
-            *alberto_rh_data, *susana_rh_data, *lorena_rh_data,\
-            *alberto_ok_data, *susana_ok_data, *lorena_ok_data,\
+dataset = [*alberto_thumbsup_data, *susana_thumbsup_data, *lorena_thumbsup_data,*federico_thumbsup_data,\
+            *alberto_rh_data, *susana_rh_data, *lorena_rh_data, *federico_rh_data,\
+            *alberto_ok_data, *susana_ok_data, *lorena_ok_data, *federico_ok_data,\
              *nongesture_data] 
 
 #save dataset to csv
 if len(dataset)>0:
     dataset_df = pd.DataFrame(dataset)
-    dataset_df.to_csv("../test-data/dataset/test_dataset_multiclass0.csv",index=False)
+    dataset_df.to_csv("../test-data/dataset/test_dataset_multiclass1.csv",index=False)

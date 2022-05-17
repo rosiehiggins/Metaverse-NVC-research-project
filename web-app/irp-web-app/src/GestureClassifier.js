@@ -5,7 +5,7 @@ export default class GestureClassifier {
 	
 	constructor(){
         this.modelLoaded = false;
-        tf.loadLayersModel('model/v14/model.json')
+        tf.loadLayersModel('model/v19/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
@@ -43,8 +43,22 @@ export default class GestureClassifier {
         return tensor;
     }
 
+    flipLandmarks(landmarks){
+        let flippedLandmarks = [];
+        for (const landmark of landmarks){
+            let newLandmark = {x:landmark.x*-1,y:landmark.y,z:landmark.z};
+            flippedLandmarks.push(newLandmark);
+        }
+        return flippedLandmarks;
+    }
+
     convertLandmarksToFeatures(lms,hand){
         let features = [];
+
+        if(hand==="Left"){
+            lms = this.flipLandmarks(lms);
+        }
+
         //thumb 0
         let thumb0 = this.landmarksHelper.getAngleBetweenLandmarks(lms[0],lms[2],lms[3]);
         features.push(thumb0);
@@ -103,12 +117,22 @@ export default class GestureClassifier {
         features.push(thumbdir.y);
         features.push(thumbdir.z);
 
-        let handnum = this.convertHand(hand);
-        features.push(handnum);
+        //let handnum = this.convertHand(hand);
+        //features.push(handnum);
 
         let tensor = tf.tensor([features]);
         return tensor;
 
+    }
+
+    //set the confidence threshold based on gesture
+    getConfidenceThreshold(index){
+        if(index===0)
+            return 0.80
+        else if(index === 1)
+            return 0.40
+        else if (index === 2)
+            return 0.50
     }
 
     predict(landmarks,hand){
@@ -119,10 +143,12 @@ export default class GestureClassifier {
         let resultTensor = this.model.predict(inputTensor);
         return resultTensor.data()
         .then((result)=>{
+            console.log("result " + result);
+            console.log("raise hand prediction " + result[1])
             let prediction = Math.max(result[0],result[1],result[2])
             let index = result.indexOf(prediction)
             let value = 0         
-            if(prediction>0.60)
+            if(prediction> this.getConfidenceThreshold(index))
                 value = index + 1;
                       
             return value;

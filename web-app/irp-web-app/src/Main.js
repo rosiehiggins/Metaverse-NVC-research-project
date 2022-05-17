@@ -164,10 +164,9 @@ class Main extends React.Component {
                     
                     this.handAPI[hand].resetTimer = setTimeout(()=>{
                             this.handAPI[hand].setHandState("None");
-                            this.handAPI[hand].resultsQueue.refresh();
-                            console.log("timer done");},500);
+                            this.handAPI[hand].resultsQueue.refresh();},500);
 
-                    console.log("hand label " + hand);
+                    //console.log("hand label " + hand);
 
                     new Promise ((resolve,reject) => {
                         //predict gesture based on chosen model

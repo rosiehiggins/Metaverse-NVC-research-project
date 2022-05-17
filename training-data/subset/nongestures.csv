@@ -1,8 +1,4 @@
 ﻿file,nonstart,nonstop,hand
-../training-videos/non-gesture/rlh_nongesture0.mp4,91,174,Left
-../training-videos/non-gesture/rlh_nongesture0.mp4,245,775,Right
-../training-videos/non-gesture/rlh_nongesture1.mp4,47,1088,Left
-../training-videos/non-gesture/rlh_nongesture2.mp4,41,341,Right
 ../training-videos/non-gesture/rc_nongesture0.mp4,94,114,Left
 ../training-videos/non-gesture/rc_nongesture0.mp4,146,412,Left
 ../training-videos/non-gesture/rc_nongesture0.mp4,451,868,Left
@@ -14,3 +10,9 @@
 ../training-videos/non-gesture/rc_nongesture1.mp4,470,592,Right
 ../training-videos/non-gesture/rc_nongesture1.mp4,614,640,Right
 ../training-videos/non-gesture/rc_nongesture1.mp4,655,790,Right
+../training-videos/non-gesture/rh_nongesture3.mp4,80,145,Right
+../training-videos/non-gesture/rh_nongesture3.mp4,386,728,Right
+../training-videos/non-gesture/rh_nongesture3.mp4,998,1013,Left
+../training-videos/non-gesture/rh_nongesture3.mp4,1252,1671,Left
+../training-videos/non-gesture/rh_nongesture4.mp4,118,557,Left
+../training-videos/non-gesture/rh_nongesture4.mp4,653,1105,Right

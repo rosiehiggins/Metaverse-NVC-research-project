@@ -1,9 +1,4 @@
-#load labelled data
-#run through videos
-#where frames are labelled with gesture convert landmarks to array
-#normalise data
-#add to dataset
-#save dataset to csv
+#API to facilitate generate datasets for training and testing gesture classifier models
 
 import cv2
 import mediapipe as mp
@@ -28,20 +23,17 @@ def balance_dataset_by_min(df):
         return None
 
 
-def landmark_tonumpy(landmark):
-    return np.array([landmark.x,landmark.y,landmark.z])
-
-def landmarks_tonumpy(landmarks):
+def landmarks_tonumpy(landmarks,xscale=1):
     lms = []
     for landmark in landmarks:
-        lm_np = landmark_tonumpy(landmark)
+        lm_np = np.array([landmark.x*xscale,landmark.y,landmark.z])
         lms.append(lm_np)
     return lms
 
 
-def landmarks_to_features(landmarks):
+def landmarks_to_features(landmarks,xscale=1):
     features = []
-    lms = landmarks_tonumpy(landmarks)
+    lms = landmarks_tonumpy(landmarks,xscale)
     #angle seg thumb0
     seg0_t0 = lms[2]-lms[0]
     seg1_t0 = lms[3]-lms[2]
@@ -386,10 +378,15 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
                         if in_range(fn,ranges,hand):
                             #convert data to array
                             #create list of features
+                            xscale = 1
+                            if hand == "Left":
+                                print("flipping")
+                                xscale = -1
+                            #flip left hands to right hand
                             feature_list = landmarks_to_features(hand_landmarks.landmark)
                             #add handedness to dataset
-                            hand_num = convert_hand(hand)
-                            feature_list.append(hand_num)
+                            #hand_num = convert_hand(hand)
+                            #feature_list.append(hand_num)
 
                             #if dataclass is array (multiclass) concatenate else append
                             if isinstance(data_class, list):
@@ -494,11 +491,11 @@ def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None
             image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             #if p > flip prob flip image and update hand
-            p = random.random()
-            if p >= flip_prob:
+            #p = random.random()
+            #if p >= flip_prob:
                 #flip image and flip hand
-                hand = flip_hand(hand)
-                image = cv2.flip(image, 1)
+                #hand = flip_hand(hand)
+                #image = cv2.flip(image, 1)
 
             #infer landmarks from image
             results = hands.process(image)
@@ -511,10 +508,16 @@ def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None
                         #convert data to array
                         #flatten and normalise landmarks 
                         #skip wrist keypoints
-                        feature_list = landmarks_to_features(hand_landmarks.landmark)
+                        xscale = 1
+                        #flip hand if left
+                        if hand == "Left":
+                            print("flipping")
+                            xscale = -1
+
+                        feature_list = landmarks_to_features(hand_landmarks.landmark,xscale)
                         #add handedness to dataset
-                        hand_num = convert_hand(hand)
-                        feature_list.append(hand_num)
+                        #hand_num = convert_hand(hand)
+                        #feature_list.append(hand_num)
 
                         #if dataclass is array (multiclass) concatenate else append
                         if isinstance(data_class, list):
