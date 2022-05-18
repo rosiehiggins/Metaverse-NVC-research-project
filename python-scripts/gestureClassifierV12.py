@@ -30,8 +30,9 @@ def GestureClassifier():
     return model
 
 #load dataset
-df = pd.read_csv("../training-data/dataset/dataset_multiclass_features9.csv",dtype=np.float32)
-
+df = pd.read_csv("../training-data/dataset/dataset_multiclass_features10.csv",dtype=np.float32)
+#previous datasets in this version
+#"../training-data/dataset/dataset_multiclass_features9.csv"
 
 
 dataset = df.to_numpy()
@@ -66,4 +67,6 @@ print("predictions shape:", predictions.shape)
 
 
 model.summary()
-model.save(filepath='../model/gestureClassifier/v19/model.h5',)
+model.save(filepath='../model/gestureClassifier/v20/model.h5',)
+#previous models in this version
+#v19

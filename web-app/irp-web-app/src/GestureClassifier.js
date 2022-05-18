@@ -5,7 +5,7 @@ export default class GestureClassifier {
 	
 	constructor(){
         this.modelLoaded = false;
-        tf.loadLayersModel('model/v19/model.json')
+        tf.loadLayersModel('model/v20/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
