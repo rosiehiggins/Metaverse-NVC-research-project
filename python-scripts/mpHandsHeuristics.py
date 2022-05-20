@@ -61,8 +61,7 @@ def getDirection(lA,lB,dir):
 
 def isThumbsUp(fingerStates,thumbDirection,knuckleDirection):
     if knuckleDirection>0.70 and thumbDirection>0.65 and not fingerStates[0] and not fingerStates[1] and not fingerStates[2] and not fingerStates[3]:
-        return True
-    
+        return True    
     else:
         return False
 
@@ -74,7 +73,7 @@ def getDelta():
 
 test_files = []
 
-#map input and targets together
+#get list of files
 for file_ in glob.glob("../training-videos/thumbs-up/*"): 
     file_ =  file_.replace("\\","/")  
     test_files.append(file_)

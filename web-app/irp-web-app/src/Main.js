@@ -101,6 +101,7 @@ class Main extends React.Component {
         //
         this.times = [];
         this.handstimes = [];
+        this.predict = true;
         
         //
         //Camera
@@ -110,19 +111,24 @@ class Main extends React.Component {
                 
                 //reset state for hand results
                 //this.resetHandStates(500);        
-                   
-                let t0 =  performance.now();      
-                await this.hands.send({image: videoRef});                
-                let t1 = performance.now();
+                //TODO could skip frames to make it run faster
 
-
-                let tdiffHands = t1-t0;
-                this.handstimes.push(tdiffHands);             
-                if(this.handstimes.length > 100){
-                    let averageHandsTime = Math.round(this.handstimes.reduce((a,b) => a + b, 0) / this.handstimes.length);
-                    this.setState({averageHandsms:averageHandsTime});
-                    this.handstimes = [];
+                if (this.predict){
+                    let t0 =  performance.now();      
+                    await this.hands.send({image: videoRef});                
+                    let t1 = performance.now();
+    
+    
+                    let tdiffHands = t1-t0;
+                    this.handstimes.push(tdiffHands);             
+                    if(this.handstimes.length > 100){
+                        let averageHandsTime = Math.round(this.handstimes.reduce((a,b) => a + b, 0) / this.handstimes.length);
+                        this.setState({averageHandsms:averageHandsTime});
+                        this.handstimes = [];
+                    }
                 }
+                this.predict = !this.predict;
+
             },
             width: 720,
             height: 438

@@ -13,6 +13,15 @@ import math
 import random
 from gestureFeatures import angle_two_vectors
 
+#rebuild landmar list from np array
+def lm_array_landmarklist(lmarray):
+    landmark_list = []
+    #build list
+    for i in range(0,len(lmarray),3):
+        kp = {"x":lmarray[i],"y":lmarray[i+1],"z":lmarray[i+2]}
+        landmark_list.append(kp) 
+    return landmark_list
+
 #balance dataset by undersampling
 def balance_dataset_by_min(df):
     if 'class' in df:
@@ -412,7 +421,7 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
 
 
 
-def get_data_from_images(path,hand,flip_prob,data_class,class_label=None):
+def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=True):
     #load files
     true_files = []
     data = []
@@ -433,7 +442,7 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None):
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             #if p > flip prob flip image and update hand
             p = random.random()
-            if p >= flip_prob:
+            if p >= flip_prob and flip_prob != 0:
                 #flip image and flip hand
                 hand = flip_hand(hand)
                 image = cv2.flip(image, 1)
@@ -449,7 +458,11 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None):
                         #convert data to array
                         #flatten and normalise landmarks 
                         #skip wrist keypoints
-                        lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9)
+                        lm_list=[]
+                        if norm:
+                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9)
+                        else:
+                            lm_list = landmarks_to_list(hand_landmarks.landmark)
                         #add handedness to dataset
                         hand_num = convert_hand(hand)
                         lm_list.append(hand_num)

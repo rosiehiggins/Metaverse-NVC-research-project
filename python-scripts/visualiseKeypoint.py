@@ -6,7 +6,7 @@ fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
 #load data points
-lms = np.genfromtxt('../tests/datapoints_for_diagram.csv', delimiter=',')
+lms = np.genfromtxt('../tests/datapoints.csv', delimiter=',')
 
 #unnomalised landmarks
 lms_ = lms[0]
