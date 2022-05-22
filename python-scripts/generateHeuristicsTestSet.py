@@ -15,7 +15,7 @@ dataset = []
 #
 
 #img data from heuristics test set
-non_gesture_data = get_data_from_images("../heuristics-test-images/non-gestures","Left",0,[0,0,0,1],norm = False)
+non_gesture_data = get_data_from_images("../heuristics-test-images/non-gestures","Left",0,"non-gesture",norm = False)
 print("non gesture")
 print(len(non_gesture_data))
 
@@ -25,7 +25,7 @@ print(len(non_gesture_data))
 #
 
 #img data from heuristics test set
-thumbsup_data = get_data_from_images("../heuristics-test-images/thumbs-up","Left",0,[1,0,0,0],norm = False)
+thumbsup_data = get_data_from_images("../heuristics-test-images/thumbs-up","Left",0,"thumbs-up",norm = False)
 print("thumbs up")
 print(len(thumbsup_data))
 
@@ -35,7 +35,7 @@ print(len(thumbsup_data))
 #
 
 #img data from heuristics test set
-raisehand_data = get_data_from_images("../heuristics-test-images/raise-hand","Left",0,[0,1,0,0],norm = False)
+raisehand_data = get_data_from_images("../heuristics-test-images/raise-hand","Left",0,"raise-hand",norm = False)
 print("raise hand")
 print(len(raisehand_data))
 
@@ -45,7 +45,7 @@ print(len(raisehand_data))
 #
 
 #img data from heuristics test set
-ok_data = get_data_from_images("../heuristics-test-images/ok","Left",0,[0,0,1,0],norm = False)
+ok_data = get_data_from_images("../heuristics-test-images/ok","Left",0,"ok",norm = False)
 print("ok")
 print(len(ok_data))
 

@@ -43,14 +43,10 @@ def predict(landmarks,hand):
     distIT = np.linalg.norm(indexTip-thumbTip)
 
     if isThumbsUp(fingerStates,thumbDirection,knuckleYDirection):
-        #print("thumbs up")
-        return [1,0,0,0]
+        return "thumbs-up"
     elif isRaiseHand(fingerStates,knuckleXDirection,knuckleYDirection,hand):
-        #print("raise hand")
-        return [0,1,0,0]
+        return "raise-hand"
     elif isOK(fingerStates,distIT):
-        #print("ok")
-        return [0,0,1,0]
+        return "ok"
     else:
-        #print("none")
-        return [0,0,0,0]
+        return "non-gesture"
