@@ -21,8 +21,8 @@ export default class GestureHeuristics {
 
     //
     //Heuristics methods
-    isThumbsUp(fingerStates,thumbDirection,knucklesYDirection){
-        if((knucklesYDirection>0.70) && (thumbDirection>0.65) && !fingerStates[1] && !fingerStates[2] && !fingerStates[3] && !fingerStates[4])
+    isThumbsUp(fingerStates,thumbTipY,knuckleY){
+        if((knuckleY>0.70) && (thumbTipY>0.55) && !fingerStates[1] && !fingerStates[2] && !fingerStates[3] && !fingerStates[4])
             return true;
         
         else 
@@ -36,9 +36,9 @@ export default class GestureHeuristics {
             return false
     }
 
-    isRaiseHand(fingerStates,knucklesXDirection,knucklesYDirection,hand="Right",velocity){
-        if((knucklesYDirection<0.60 && knucklesYDirection >-0.20 && hand ) && 
-            ((knucklesXDirection>0.8 && hand ==="Right")||(knucklesXDirection<-0.8 && hand ==="Left")) 
+    isRaiseHand(fingerStates,knuckleX,palmY,hand="Right",velocity){
+        if((palmY>0.85) && 
+            ((knuckleX>0.75 && hand ==="Right")||(knuckleX<-0.75 && hand ==="Left")) 
             && fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4]
             && velocity < 0.01){
                 return true;
@@ -48,23 +48,26 @@ export default class GestureHeuristics {
             return false
     }
 
-    isWave(fingerStates,handVelocity,knucklesXDirection,knucklesYDirection,hand="Right"){
+
+    isWave(fingerStates,handVelocity,knuckleX,palmY,hand="Right"){
         //fingers straight
         //palm forward
         //velocity greater than x?        
         let v = handVelocity*1000;
         if((v>0.1) &&
-            (knucklesYDirection<0.80 && knucklesYDirection >-0.30 && hand ) &&
+            (palmY >0.5) &&
             fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] &&
-            ((knucklesXDirection>0.7 && hand ==="Right")||(knucklesXDirection<-0.7 && hand ==="Left"))){
+            ((knuckleX>0.4 && hand ==="Right")||(knuckleX<-0.4 && hand ==="Left"))){
             return true;
         }          
         else 
             return false
     }
 
-    isOK(fingerStates,distIT){
-        if(distIT<=0.06 && !fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4])
+    isOK(fingerStates,distIT,knuckleX,palmY,hand="Right"){
+        if((palmY>0.85) && 
+            ((knuckleX>0.50 && hand ==="Right")||(knuckleX<-0.50 && hand ==="Left"))
+            && distIT<=0.06 && !fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4])
             return true;
         else 
             return false
@@ -76,12 +79,17 @@ export default class GestureHeuristics {
         //return 0,1,3,4,5,
         const fingerStatesCollinear = this.landmarksHelper.getFingerStatesCollinear(landmarks);
         
-        const thumbDirection = Vector3.Dot(this.landmarksHelper.getDirectionVector(landmarks[4],landmarks[3]),new Vector3(0,1,0));
-        const knuckleYDirection = Vector3.Dot(this.landmarksHelper.getDirectionVector(landmarks[5],landmarks[17]),new Vector3(0,1,0));
-        const knuckleXDirection = Vector3.Dot(this.landmarksHelper.getDirectionVector(landmarks[5],landmarks[17]),new Vector3(1,0,0));
+        const knuckleDir = this.landmarksHelper.getDirectionVector(landmarks[5],landmarks[17])
+
+        const thumbTipY = this.landmarksHelper.getDirectionVector(landmarks[4],landmarks[3]).y;
+        const knuckleX = knuckleDir.x;
+        const knuckleY = knuckleDir.y;
+        const palmY = this.landmarksHelper.getDirectionVector(landmarks[9],landmarks[0]).y;
+
 
         const indexTip = new Vector3(landmarks[8].x,landmarks[8].y,landmarks[8].z);
         const thumbTip = new Vector3(landmarks[4].x,landmarks[4].y,landmarks[4].z);
+        
         const distIT = Vector3.Distance(indexTip,thumbTip);
         
         let handVelocity = 0; 
@@ -91,19 +99,19 @@ export default class GestureHeuristics {
             handVelocity = this.landmarksHelper.getXVelocity(middleTip,prevMiddleTipPos,td);
         }
 
-        if(this.isThumbsUp(fingerStatesCollinear,thumbDirection,knuckleYDirection)){
+        if(this.isThumbsUp(fingerStatesCollinear,thumbTipY,knuckleY)){
             return 1;         
         }
         else if(this.isSwear(fingerStatesCollinear)){
             return 5;         
         }
-        else if(this.isWave(fingerStatesCollinear,handVelocity,knuckleXDirection,knuckleYDirection,hand)){
+        else if(this.isWave(fingerStatesCollinear,handVelocity,knuckleX,palmY,hand)){
             return 4;        
         }
-        else if(this.isRaiseHand(fingerStatesCollinear,knuckleXDirection,knuckleYDirection,hand,handVelocity)){
+        else if(this.isRaiseHand(fingerStatesCollinear,knuckleX,palmY,hand,handVelocity)){
             return 2;                                      
         }
-        else if(this.isOK(fingerStatesCollinear,distIT)){
+        else if(this.isOK(fingerStatesCollinear,distIT,knuckleX,palmY,hand)){
             return 3;         
         }
         else {

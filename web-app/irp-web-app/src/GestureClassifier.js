@@ -147,11 +147,11 @@ export default class GestureClassifier {
         .then((result)=>{
             //console.log("result " + result);
             //test temperature scaling result
-            console.log("rh pre scale " + result[1])
+            //console.log("rh pre scale " + result[1])
             result[1] = result[1] * 4
             //result[3] = result[3] * 2
-            console.log("rh post scale " + result[1])
-            console.log("result " + result);
+            //console.log("rh post scale " + result[1])
+            //console.log("result " + result);
             //console.log("raise hand prediction " + result[1])           
             let prediction = Math.max(result[0],result[1],result[2])
             let index = result.indexOf(prediction)

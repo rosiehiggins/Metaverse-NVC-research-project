@@ -62,14 +62,14 @@ class Main extends React.Component {
         this.handAPI = {"Left":{
                             "resetTimer":this.leftHandTimer,
                             "resultsQueue":this.resultsQueueLeft,
-                            "setHandState":(state) =>{this.setState({leftGesture:state});},
+                            "setHandState":(state) =>{if (state !== this.state.leftGesture) {this.setState({leftGesture:state});}},
                             "predictHeuristics": this.GestureHeuristics.predictLeft,
 
                         },
                         "Right":{
                             "resetTimer":this.rightHandTimer,
                             "resultsQueue":this.resultsQueueRight,
-                            "setHandState":(state) =>{this.setState({rightGesture:state})},
+                            "setHandState":(state) =>{if (state !== this.state.rightGesture) {this.setState({rightGesture:state});}},
                             "predictHeuristics": this.GestureHeuristics.predictRight,
                         }};
 
@@ -108,11 +108,7 @@ class Main extends React.Component {
         //
         this.camera = new camera_utils.Camera(videoRef, {
             onFrame: async () => {  
-                
-                //reset state for hand results
-                //this.resetHandStates(500);        
-                //TODO could skip frames to make it run faster
-
+                    
                 if (this.predict){
                     let t0 =  performance.now();      
                     await this.hands.send({image: videoRef});                
@@ -171,8 +167,6 @@ class Main extends React.Component {
                     this.handAPI[hand].resetTimer = setTimeout(()=>{
                             this.handAPI[hand].setHandState("None");
                             this.handAPI[hand].resultsQueue.refresh();},500);
-
-                    //console.log("hand label " + hand);
 
                     new Promise ((resolve,reject) => {
                         //predict gesture based on chosen model
