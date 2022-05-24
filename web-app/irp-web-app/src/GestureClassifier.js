@@ -135,8 +135,6 @@ export default class GestureClassifier {
             return 0.50
     }
 
-
-
     predict(landmarks,hand){
         if(!this.modelLoaded)
          return Promise.resolve(null);
@@ -146,13 +144,8 @@ export default class GestureClassifier {
         return resultTensor.data()
         .then((result)=>{
             //console.log("result " + result);
-            //test temperature scaling result
-            //console.log("rh pre scale " + result[1])
-            result[1] = result[1] * 4
-            //result[3] = result[3] * 2
-            //console.log("rh post scale " + result[1])
-            //console.log("result " + result);
-            //console.log("raise hand prediction " + result[1])           
+            //calibrate raise hand
+            result[1] = result[1] * 4     
             let prediction = Math.max(result[0],result[1],result[2])
             let index = result.indexOf(prediction)
             let value = 0         
