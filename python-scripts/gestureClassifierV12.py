@@ -1,4 +1,5 @@
 #multi class, flipped all hands to be right hands therefore removed an input dim
+#23 feature model
 
 import os
 #manually add dll directories because they can't be found in system path
@@ -30,9 +31,10 @@ def GestureClassifier():
     return model
 
 #load dataset
-df = pd.read_csv("../training-data/dataset/dataset_multiclass_features10.csv",dtype=np.float32)
+df = pd.read_csv("../training-data/dataset/dataset_multiclass_23f.csv",dtype=np.float32)
 #previous datasets in this version
 #"../training-data/dataset/dataset_multiclass_features9.csv"
+#"../training-data/dataset/dataset_multiclass_features10.csv"
 
 
 dataset = df.to_numpy()
@@ -52,7 +54,7 @@ model = GestureClassifier()
 callback = EarlyStopping(monitor='val_loss', patience=2, min_delta=0.002)
 
 #fit model - look up a good number of epochs and batches
-model.fit(X_train, Y_train, epochs=50, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])
+model.fit(X_train, Y_train, epochs=100, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])
 
 # Evaluate the model on the test data using `evaluate`
 print("Evaluate on test data")
@@ -67,6 +69,7 @@ print("predictions shape:", predictions.shape)
 
 
 model.summary()
-model.save(filepath='../model/gestureClassifier/v20/model.h5',)
+model.save(filepath='../model/gestureClassifier/v22/model.h5',)
 #previous models in this version
 #v19
+#v20

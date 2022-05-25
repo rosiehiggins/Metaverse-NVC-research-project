@@ -130,9 +130,9 @@ export default class GestureClassifier {
         if(index===0)
             return 0.80
         else if(index === 1)
-            return 0.40
+            return 0
         else if (index === 2)
-            return 0.50
+            return 0.2
     }
 
     predict(landmarks,hand){
@@ -146,8 +146,9 @@ export default class GestureClassifier {
             //console.log("result " + result);
             //calibrate raise hand
             result[1] = result[1] * 4     
-            let prediction = Math.max(result[0],result[1],result[2])
-            let index = result.indexOf(prediction)
+            let prediction = Math.max(result[0],result[1],result[2]);
+            console.log("prediction " + prediction);
+            let index = result.indexOf(prediction);
             let value = 0         
             if(prediction> this.getConfidenceThreshold(index))
                 value = index + 1;

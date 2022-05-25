@@ -1,4 +1,4 @@
-#API to facilitate generate datasets for training and testing gesture classifier models
+#Python module with a series of functions to facilitate generate datasets for training and testing gesture classifier models
 
 import cv2
 import mediapipe as mp
@@ -165,7 +165,7 @@ def landmarks_to_list(landmarks):
     return lm_list
 
 #flatten and normalise landmarks
-def landmarks_to_list_norm(landmarks,scalekp=9):
+def landmarks_to_list_norm(landmarks,scalekp=9,xscale=1):
     lm_list = []
 
     #translate hand with wrist at origin
@@ -182,7 +182,7 @@ def landmarks_to_list_norm(landmarks,scalekp=9):
     i = 0
     for lms in landmarks:
         if i != 0:
-            lm_list.append((lms.x-wrist_x)*scalefactor)
+            lm_list.append(((lms.x-wrist_x)*scalefactor)*xscale)
             lm_list.append((lms.y-wrist_y)*scalefactor)
             lm_list.append((lms.z-wrist_z)*scalefactor)
         i += 1
@@ -294,12 +294,12 @@ def get_data(path,frame_ranges,data_class,class_label=None):
                         ranges = frame_ranges[f]
                         hand = results.multi_handedness[i].classification[0].label
                         if in_range(fn,ranges,hand):
+                            xscale = 1
+                            if hand == "Left":
+                                xscale = -1
                             #convert data to array
                             #flatten and normalise landmarks 
-                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9)
-                            #add handedness to dataset
-                            hand_num = convert_hand(hand)
-                            lm_list.append(hand_num)
+                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
 
                             #if dataclass is array (multiclass) concatenate else append
                             if isinstance(data_class, list):
@@ -327,7 +327,9 @@ def get_data(path,frame_ranges,data_class,class_label=None):
 def get_feature_data(path,frame_ranges,data_class,class_label=None):
     #load files
     true_files = []
-    data = []
+    data23 = []
+    data60 = []
+
     for file_ in glob.glob(path+"/*"):   
         file_ =  file_.replace("\\","/")
         true_files.append(file_)
@@ -389,23 +391,26 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
                             #create list of features
                             xscale = 1
                             if hand == "Left":
-                                print("flipping")
                                 xscale = -1
-                            #flip left hands to right hand
-                            feature_list = landmarks_to_features(hand_landmarks.landmark)
-                            #add handedness to dataset
-                            #hand_num = convert_hand(hand)
-                            #feature_list.append(hand_num)
+
+                            feature_list_23 = landmarks_to_features(hand_landmarks.landmark,xscale)
+                            feature_list_60 = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
 
                             #if dataclass is array (multiclass) concatenate else append
                             if isinstance(data_class, list):
-                                feature_list = [*feature_list,*data_class]
+                                feature_list_23 = [*feature_list_23,*data_class]
+                                feature_list_60 = [*feature_list_60,*data_class]
                             else:
-                                feature_list.append(data_class)
+                                feature_list_23.append(data_class)
+                                feature_list_60.append(data_class)
+
                             if class_label is not None:
-                                feature_list.append(class_label)                                
-                            #add to dataset
-                            data.append(feature_list)
+                                feature_list_23.append(class_label)   
+                                feature_list_60.append(class_label)   
+                                                          
+                            #add to datasets
+                            data23.append(feature_list_23)
+                            data60.append(feature_list_60)
                             count+=1
                         i+=1
                         
@@ -415,7 +420,7 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
                 if cv2.waitKey(5) & 0xFF == 27:
                     break
         cap.release()   
-    return data
+    return data23,data60
 
 
 
@@ -455,17 +460,19 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=Tr
                 for hand_landmarks in results.multi_hand_landmarks:                   
                     pred_hand = results.multi_handedness[i].classification[0].label
                     if hand == pred_hand:
-                        #convert data to array
-                        #flatten and normalise landmarks 
-                        #skip wrist keypoints
+                        xscale = 1
+                        if hand == "Left":
+                            xscale = -1
+
+                        #flatten data to array, normalise if norm flag = true
                         lm_list=[]
                         if norm:
-                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9)
+                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
                         else:
                             lm_list = landmarks_to_list(hand_landmarks.landmark)
-                        #add handedness to dataset
-                        hand_num = convert_hand(hand)
-                        lm_list.append(hand_num)
+                            #add handedness
+                            hand_num = convert_hand(hand)
+                            lm_list.append(hand_num)                        
 
                         #if dataclass is array (multiclass) concatenate else append
                         if isinstance(data_class, list):
@@ -484,10 +491,12 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=Tr
     return data  
 
 
-def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None):
+def get_feature_data_from_images(path,hand,data_class,class_label=None):
     #load files
     true_files = []
-    data = []
+    data23 = []
+    data60 = []
+
     for file_ in glob.glob(path+"/*"):   
         file_ =  file_.replace("\\","/")
         true_files.append(file_)
@@ -503,12 +512,6 @@ def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None
             image = cv2.imread(f)
             image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            #if p > flip prob flip image and update hand
-            #p = random.random()
-            #if p >= flip_prob:
-                #flip image and flip hand
-                #hand = flip_hand(hand)
-                #image = cv2.flip(image, 1)
 
             #infer landmarks from image
             results = hands.process(image)
@@ -518,31 +521,30 @@ def get_feature_data_from_images(path,hand,flip_prob,data_class,class_label=None
                 for hand_landmarks in results.multi_hand_landmarks:                   
                     pred_hand = results.multi_handedness[i].classification[0].label
                     if hand == pred_hand:
-                        #convert data to array
-                        #flatten and normalise landmarks 
-                        #skip wrist keypoints
+
                         xscale = 1
                         #flip hand if left
                         if hand == "Left":
-                            print("flipping")
                             xscale = -1
 
-                        feature_list = landmarks_to_features(hand_landmarks.landmark,xscale)
-                        #add handedness to dataset
-                        #hand_num = convert_hand(hand)
-                        #feature_list.append(hand_num)
+                        feature_list_23 = landmarks_to_features(hand_landmarks.landmark,xscale)
+                        feature_list_60 = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
 
                         #if dataclass is array (multiclass) concatenate else append
                         if isinstance(data_class, list):
-                            feature_list = [*feature_list,*data_class]
+                            feature_list_23 = [*feature_list_23,*data_class]
+                            feature_list_60 = [*feature_list_60,*data_class]
                         else:
-                            feature_list.append(data_class) 
+                            feature_list_23.append(data_class) 
+                            feature_list_60.append(data_class)
 
                         if class_label is not None:
-                            feature_list.append(class_label)
+                            feature_list_23.append(class_label)
+                            feature_list_60.append(class_label)
 
-                        data.append(feature_list)
+                        data23.append(feature_list_23)
+                        data60.append(feature_list_60)
                         count+=1
                     i+=1
 
-    return data  
+    return data23,data60  

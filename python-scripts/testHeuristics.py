@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import multilabel_confusion_matrix
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from createDataset import lm_array_landmarklist
