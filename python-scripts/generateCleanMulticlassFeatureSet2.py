@@ -240,7 +240,7 @@ print(len(tomas_ok_data))
 #balance and save dataset to csv
 #
 #23 features
-
+seed = 29
 
 dataset = [*raul_ok_data, *samira_ok_data, *ok_data, *arturo_ok_data, *alfredo_ok_data, *ana_ok_data, *ana_m_ok_data, *carlos_c_ok_data, *esther_ok_data, *jesus_ok_data, *raquel_ok_data, *tomas_ok_data,\
             *raul_rh_data,*rh_data, *samira_rh_data,  *arturo_rh_data, *carlos_c_rh_data, *esther_rh_data, *jesus_rh_data, *raquel_rh_data, *tomas_rh_data,\
@@ -258,7 +258,7 @@ dataset_df = pd.DataFrame(dataset, columns=columns)
 sample = balance_dataset_by_min(dataset_df)
 
 #shuffle and drop class
-sample = sample.sample(frac = 1)
+sample = sample.sample(frac = 1,random_state=29)
 sample = sample.drop('class', 1)
 
 sample.to_csv("../training-data/dataset/dataset_multiclass_23f.csv",index=False)
@@ -274,17 +274,16 @@ dataset60 = [*raul_ok_data60, *samira_ok_data60, *ok_data60, *arturo_ok_data60, 
             *thumbsup_data60, *raul_tu_data60, *samira_tu_data60,*alfredo_tu_data60,*ana_tu_data60,*ana_m_tu_data60,*arturo_tu_data60,*carlos_c_tu_data60, *esther_tu_data60, *jesus_tu_data60, *raquel_tu_data60, *tomas_tu_data60,\
             *nongesture_data60, *raul_fist_data60, *raquel_non_data60, *tomas_non_data60] 
 
-seed = 29
 
 columns60 = [*range(0, 64)]
 columns60.append("class")
-dataset_df_60 = pd.DataFrame(dataset60, columns=columns60,random_state=seed)
+dataset_df_60 = pd.DataFrame(dataset60, columns=columns60)
 
 #balance
 sample60 = balance_dataset_by_min(dataset_df_60)
 
 #shuffle and drop class
-sample60 = sample60.sample(frac = 1,random_state=seed)
+sample60 = sample60.sample(frac = 1,random_state=29)
 sample60 = sample60.drop('class', 1)
 
 sample60.to_csv("../training-data/dataset/dataset_multiclass_60f.csv",index=False)

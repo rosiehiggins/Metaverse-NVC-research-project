@@ -5,11 +5,11 @@ export default class GestureClassifier {
 	
 	constructor(){
         this.modelLoaded = false;
-        tf.loadLayersModel('model/v20/model.json')
+        tf.loadLayersModel('model/v26/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
-            console.log("model loaded" + this.modelLoaded);
+            console.log("model loaded" + this.modelLoaded + "v26");
         })          
         this.landmarksHelper = new LandmarksHelper(); 
 	}
@@ -128,11 +128,11 @@ export default class GestureClassifier {
     //set the confidence threshold based on gesture
     getConfidenceThreshold(index){
         if(index===0)
-            return 0.80
+            return 0.8
         else if(index === 1)
-            return 0
+            return 0.6
         else if (index === 2)
-            return 0.2
+            return 0.3
     }
 
     predict(landmarks,hand){
@@ -145,7 +145,7 @@ export default class GestureClassifier {
         .then((result)=>{
             //console.log("result " + result);
             //calibrate raise hand
-            result[1] = result[1] * 4     
+            //result[1] = result[1] * 4     
             let prediction = Math.max(result[0],result[1],result[2]);
             console.log("prediction " + prediction);
             let index = result.indexOf(prediction);

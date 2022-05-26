@@ -45,9 +45,9 @@ def createConfusionMatrix(filepath,model,numfeatures):
     return cm_df
 
 #23 features
-model0 = load_model("../model/gestureClassifier/v22/model.h5")
+model0 = load_model("../model/gestureClassifier/v24/model.h5")
 #60 features
-model1 = load_model("../model/gestureClassifier/v23/model.h5")
+model1 = load_model("../model/gestureClassifier/v25/model.h5")
 
 print("23 feature results")
 

@@ -26,7 +26,7 @@ cm_df = pd.read_csv("../../results/neuralnetwork-results/confusion_matrix_60.csv
 print(cm_df)
 
 #Plotting the confusion matrix
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(10,8))
 sns.heatmap(cm_df, annot=True, fmt='g')
 plt.title('Static gestures 60 features')
 plt.ylabel('Actual Values')
