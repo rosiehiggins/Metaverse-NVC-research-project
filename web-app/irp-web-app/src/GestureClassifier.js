@@ -5,40 +5,47 @@ export default class GestureClassifier {
 	
 	constructor(){
         this.modelLoaded = false;
+        //load 23 input model
         tf.loadLayersModel('model/v26/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
-            console.log("model loaded" + this.modelLoaded + "v26");
-        })          
+            console.log("model 23 loaded" + this.modelLoaded + "v26");
+        })    
+        //load 60 input model
+        tf.loadLayersModel('model/v25/model.json')
+        .then((model)=>{
+            this.model60 = model;
+            this.model60Loaded = true;
+            console.log("model 60 loaded" + this.model60Loaded + "v25");
+        })    
+        //landmarks helper functions
         this.landmarksHelper = new LandmarksHelper(); 
 	}
 
-    convertHand(hand){
-        if(hand==="Right")
-            return 1
-        else
-            return 0
-    }
-	
     //normalise and convert landmarks to list
-    convertLandmarks(landmarks,hand,trans={x:0,y:0,z:0},scalelm=9){
+    convertLandmarks(landmarks,hand,scalelm=9){
+        let scalex = 1
+        if(hand==="Left")
+            scalex = -1       
         //return landmarks in format for model
+        //get wrist for origin
+        let wrist = landmarks[0]
+        //get scale landmark
         let slm = landmarks[scalelm];
-        let slmt = {x: slm.x-trans.x, y: slm.y-trans.y, z: slm.z-trans.z}
+        //translate scale landmark
+        let slmt = {x: slm.x-wrist.x, y: slm.y-wrist.y, z: slm.z-wrist.z}
         let scalingFactor = 1/(Math.sqrt(Math.pow(slmt.x,2) + Math.pow(slmt.y,2) + Math.pow(slmt.z,2)));
         let lms = []
         let i = 0
         for (const landmark of landmarks){
             if(i!==0){
-                lms.push((landmark.x-trans.x)*scalingFactor);
-                lms.push((landmark.y-trans.y)*scalingFactor);
-                lms.push((landmark.z-trans.z)*scalingFactor);
+                lms.push(((landmark.x-wrist.x)*scalingFactor)*scalex);
+                lms.push((landmark.y-wrist.y)*scalingFactor);
+                lms.push((landmark.z-wrist.z)*scalingFactor);
             }  
             i++;
         }
-        let handnum = this.convertHand(hand)
-        lms.push(handnum)
         let tensor = tf.tensor([lms]);
         return tensor;
     }
@@ -117,9 +124,6 @@ export default class GestureClassifier {
         features.push(thumbdir.y);
         features.push(thumbdir.z);
 
-        //let handnum = this.convertHand(hand);
-        //features.push(handnum);
-
         let tensor = tf.tensor([features]);
         return tensor;
 
@@ -130,9 +134,19 @@ export default class GestureClassifier {
         if(index===0)
             return 0.8
         else if(index === 1)
-            return 0.6
+            return 0.5
         else if (index === 2)
             return 0.3
+    }
+
+    //set the confidence threshold based on gesture for 60 input
+    getConfidenceThreshold60(index){
+        if(index===0)
+            return 0.4
+        else if(index === 1)
+            return 0.8
+        else if (index === 2)
+            return 0.6
     }
 
     predict(landmarks,hand){
@@ -144,10 +158,8 @@ export default class GestureClassifier {
         return resultTensor.data()
         .then((result)=>{
             //console.log("result " + result);
-            //calibrate raise hand
-            //result[1] = result[1] * 4     
             let prediction = Math.max(result[0],result[1],result[2]);
-            console.log("prediction " + prediction);
+            //console.log("prediction " + prediction);
             let index = result.indexOf(prediction);
             let value = 0         
             if(prediction> this.getConfidenceThreshold(index))
@@ -155,5 +167,24 @@ export default class GestureClassifier {
                       
             return value;
         });
+    }
+
+    predict60(landmarks,hand){
+        if(!this.model60Loaded)
+        return Promise.resolve(null);
+       //return gesture prediction
+       let inputTensor = this.convertLandmarks(landmarks,hand,9);
+       let resultTensor = this.model60.predict(inputTensor);
+       return resultTensor.data()
+       .then((result)=>{
+           //console.log("result " + result);
+           let prediction = Math.max(result[0],result[1],result[2]);
+           //console.log("prediction " + prediction);
+           let index = result.indexOf(prediction);
+           let value = 0         
+           if(prediction> this.getConfidenceThreshold60(index))
+               value = index + 1;                    
+           return value;
+       });
     }
 }

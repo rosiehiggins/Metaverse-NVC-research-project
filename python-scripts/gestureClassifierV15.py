@@ -46,7 +46,18 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y,test_size=0.2,random_st
 model = GestureClassifier()
 
 #set up early stopping callback
-callback = EarlyStopping(monitor='val_loss', patience=2, min_delta=0.002)
+#callback = EarlyStopping(monitor='val_loss', patience=2, min_delta=0.002)
+
+#set up early stopping callback
+callback = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0,
+    patience=0,
+    verbose=0,
+    mode="auto",
+    baseline=None,
+    restore_best_weights=True,
+)
 
 #fit model - look up a good number of epochs and batches
 model.fit(X_train, Y_train, epochs=100, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])

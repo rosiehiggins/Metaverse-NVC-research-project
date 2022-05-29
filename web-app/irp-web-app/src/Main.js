@@ -80,6 +80,22 @@ class Main extends React.Component {
         let videoRef = this.videoRef.current
         
         //
+        //Performance variables
+        //
+        this.times = [];
+        this.handstimes = [];
+
+        //benchmarks
+        this.benchmarks = {
+            "MPTimes": [],
+            "Heuristic":[],
+            "NeuralNetwork":[],
+            "NeuralNetwork60":[]
+        }
+
+        this.predict = true;
+        
+        //
         //load MediaPipe Hands model
         //
         this.hands = new mp_hands.Hands({locateFile: (file) => {
@@ -94,13 +110,20 @@ class Main extends React.Component {
             selfieMode:true,
         });
         //set results call back function
-        this.hands.onResults((results)=>{this.predictResults(results)});
+        this.hands.onResults((results)=>{
+            //add to benchmarks
+            if(this.t0){
+                const t1 = performance.now();
+                let diff = t1 - this.t0;
+                this.benchmarks["MPTimes"].push(diff)
+                if(this.benchmarks["MPTimes"].length>100)
+                    this.benchmarks["MPTimes"].shift();                
+            }    
+            //predict results
+            this.predictResults(results)
+        });
 
-        //
-        //Preformance variables
-        //
-        this.times = [];
-        this.handstimes = [];
+
         this.predict = true;
         
         //
@@ -110,12 +133,12 @@ class Main extends React.Component {
             onFrame: async () => {  
                     
                 if (this.predict){
-                    let t0 =  performance.now();      
+                    this.t0 =  performance.now();      
                     await this.hands.send({image: videoRef});                
                     let t1 = performance.now();
     
     
-                    let tdiffHands = t1-t0;
+                    let tdiffHands = t1-this.t0;
                     this.handstimes.push(tdiffHands);             
                     if(this.handstimes.length > 100){
                         let averageHandsTime = Math.round(this.handstimes.reduce((a,b) => a + b, 0) / this.handstimes.length);
@@ -167,19 +190,33 @@ class Main extends React.Component {
                     this.handAPI[hand].resetTimer = setTimeout(()=>{
                             this.handAPI[hand].setHandState("None");
                             this.handAPI[hand].resultsQueue.refresh();},500);
-
+                    
+                    const t0 = performance.now(); 
+                    const modelType = this.state.modeltype;
                     new Promise ((resolve,reject) => {
                         //predict gesture based on chosen model
-                        if(this.state.modeltype === "Heuristic"){
+                        if(modelType === "Heuristic"){
                             let prediction = this.handAPI[hand].predictHeuristics(landmarks,hand);
                             resolve(prediction)
                         }
-                        else if(this.state.modeltype === "NeuralNetwork"){
+                        else if(modelType === "NeuralNetwork"){
                             resolve(this.GestureClassifier.predict(landmarks,hand))
+                        }
+                        else if(modelType === "NeuralNetwork60"){
+                            resolve(this.GestureClassifier.predict60(landmarks,hand))
                         }
                     })
                     .then((prediction) => {
                         if(prediction!==null){
+                            //calculate benchmarks
+                            if(t0){
+                                const t1 = performance.now();
+                                let diff = t1 - t0;
+                                this.benchmarks[modelType].push(diff);
+                                if(this.benchmarks[modelType].length>100)
+                                    this.benchmarks[modelType].shift();
+                            }
+                            //set states
                             this.handAPI[hand].resultsQueue.enqueue(prediction);
                             const handstate = this.handAPI[hand].resultsQueue.getResult();
                             this.handAPI[hand].setHandState(this.statesMap[handstate]);                            
@@ -245,6 +282,7 @@ class Main extends React.Component {
                 </div>
                 <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
                     <Button sx={{mx:2}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide keypoints" : "Show keypoints"}</Button>
+                    <Button sx={{mx:2}} onClick = {()=>{console.log(JSON.stringify(this.benchmarks))}} variant="contained">log benchmarks</Button>
                     <FormControl >
                         <InputLabel id="model-select-label">Model type</InputLabel>
                         <Select
@@ -256,7 +294,8 @@ class Main extends React.Component {
                         onChange={(e)=>this.handleModelChange(e.target.value)}
                         >
                             <MenuItem value={"Heuristic"}>Heuristic</MenuItem>
-                            <MenuItem value={"NeuralNetwork"}>Neural network</MenuItem>
+                            <MenuItem value={"NeuralNetwork"}>Neural net 23 input</MenuItem>
+                            <MenuItem value={"NeuralNetwork60"}>Neural net 60 input</MenuItem>
                         </Select>
                     </FormControl>                    
                     <Box sx={{display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column", }}>
