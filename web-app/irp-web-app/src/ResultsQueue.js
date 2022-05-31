@@ -59,7 +59,7 @@ export default class ResultsQueue {
 
     refresh(){
         let arr = Array(this.maxLength);
-        arr.fill(0);
+        arr.fill(3);
         this.items = arr;
     }
 

@@ -100,7 +100,7 @@ export default class GestureHeuristics {
         }
 
         if(this.isThumbsUp(fingerStatesCollinear,thumbTipY,knuckleY)){
-            return 1;         
+            return 0;         
         }
         else if(this.isSwear(fingerStatesCollinear)){
             return 5;         
@@ -109,13 +109,13 @@ export default class GestureHeuristics {
             return 4;        
         }
         else if(this.isRaiseHand(fingerStatesCollinear,knuckleX,palmY,hand,handVelocity)){
-            return 2;                                      
+            return 1;                                      
         }
         else if(this.isOK(fingerStatesCollinear,distIT,knuckleX,palmY,hand)){
-            return 3;         
+            return 2;         
         }
         else {
-            return 0;        
+            return 3;        
         }       
     }
 

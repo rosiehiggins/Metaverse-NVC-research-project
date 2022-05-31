@@ -56,7 +56,7 @@ class Main extends React.Component {
         this.rightHandTimer = null;
         
         //map model outputs to render states
-        this.statesMap = {0:"None",1:"Thumbs up",2:"Raise hand",3:"OK",4:"Wave",5:">:-("};
+        this.statesMap = {0:"Thumbs up",1:"Raise hand",2:"OK",3:"None",4:"Wave",5:">:-("};
 
         //hand API
         this.handAPI = {"Left":{

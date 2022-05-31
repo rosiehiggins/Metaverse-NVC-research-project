@@ -147,6 +147,8 @@ export default class GestureClassifier {
             return 0.8
         else if (index === 2)
             return 0.6
+        else if (index === 3)
+            return 0
     }
 
     predict(landmarks,hand){
@@ -157,15 +159,14 @@ export default class GestureClassifier {
         let resultTensor = this.model.predict(inputTensor);
         return resultTensor.data()
         .then((result)=>{
-            //console.log("result " + result);
-            let prediction = Math.max(result[0],result[1],result[2]);
-            //console.log("prediction " + prediction);
-            let index = result.indexOf(prediction);
-            let value = 0         
-            if(prediction> this.getConfidenceThreshold(index))
-                value = index + 1;
-                      
-            return value;
+           result[3] = result[3]*2
+           let prediction = Math.max(result[0],result[1],result[2],result[3]);
+           console.log("prediction " + prediction);
+           let index = result.indexOf(prediction);
+           let value = 3         
+           if(prediction> this.getConfidenceThreshold60(index))
+               value = index                    
+           return value;
         });
     }
 
@@ -177,13 +178,14 @@ export default class GestureClassifier {
        let resultTensor = this.model60.predict(inputTensor);
        return resultTensor.data()
        .then((result)=>{
-           //console.log("result " + result);
-           let prediction = Math.max(result[0],result[1],result[2]);
-           //console.log("prediction " + prediction);
+           //Test to amplify non-gesture result
+           result[3] = result[3]*2
+           let prediction = Math.max(result[0],result[1],result[2],result[3]);
+           console.log("prediction " + prediction);
            let index = result.indexOf(prediction);
-           let value = 0         
+           let value = 3         
            if(prediction> this.getConfidenceThreshold60(index))
-               value = index + 1;                    
+               value = index                    
            return value;
        });
     }

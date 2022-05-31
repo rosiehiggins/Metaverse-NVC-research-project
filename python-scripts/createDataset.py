@@ -230,7 +230,7 @@ def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
     return frame_ranges
 
 #"../test-videos/thumbs-up/*"
-def get_data(path,frame_ranges,data_class,class_label=None):
+def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
     #load files
     true_files = []
     data = []
@@ -297,9 +297,15 @@ def get_data(path,frame_ranges,data_class,class_label=None):
                             xscale = 1
                             if hand == "Left":
                                 xscale = -1
-                            #convert data to array
-                            #flatten and normalise landmarks 
-                            lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
+                            #flatten data to array, normalise if norm flag = true
+                            lm_list=[]
+                            if norm:
+                                lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
+                            else:
+                                lm_list = landmarks_to_list(hand_landmarks.landmark)
+                                #add handedness
+                                hand_num = convert_hand(hand)
+                                lm_list.append(hand_num)  
 
                             #if dataclass is array (multiclass) concatenate else append
                             if isinstance(data_class, list):
@@ -426,7 +432,7 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
 
 
 
-def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=True):
+def get_data_from_images(path,hand,data_class,class_label=None,norm=True):
     #load files
     true_files = []
     data = []
@@ -445,12 +451,6 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=Tr
             image = cv2.imread(f)
             image.flags.writeable = False
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            #if p > flip prob flip image and update hand
-            p = random.random()
-            if p >= flip_prob and flip_prob != 0:
-                #flip image and flip hand
-                hand = flip_hand(hand)
-                image = cv2.flip(image, 1)
 
             #infer landmarks from image
             results = hands.process(image)
@@ -487,7 +487,6 @@ def get_data_from_images(path,hand,flip_prob,data_class,class_label=None,norm=Tr
                         data.append(lm_list)
                         count+=1
                     i+=1
-
     return data  
 
 
