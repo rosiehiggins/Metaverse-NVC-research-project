@@ -42,6 +42,8 @@ class Main extends React.Component {
         //bind event methods to main class
         this.toggleDisplayLandmarks = this.toggleDisplayLandmarks.bind(this);
         this.handleModelChange = this.handleModelChange.bind(this);
+        this.stopCamera = this.stopCamera.bind(this);
+        this.startCamera = this.startCamera.bind(this);
 
         //buffer to hold results for each hand
         this.resultsQueueLeft = new ResultsQueue(8);
@@ -272,6 +274,14 @@ class Main extends React.Component {
         return img;
     }
 
+    stopCamera(){
+        this.camera.stop();
+    }
+
+    startCamera(){
+        this.camera.start()
+    }
+
 	render() {		
 		return (
             <Box sx={{ p: 2, display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
@@ -282,7 +292,9 @@ class Main extends React.Component {
                 </div>
                 <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
                     <Button sx={{mx:2}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide keypoints" : "Show keypoints"}</Button>
-                    <Button sx={{mx:2}} onClick = {()=>{console.log(JSON.stringify(this.benchmarks))}} variant="contained">log benchmarks</Button>
+                    {/*<Button sx={{mx:2}} onClick = {()=>{console.log(JSON.stringify(this.benchmarks))}} variant="contained">log benchmarks</Button>*/}
+                    {/*<Button sx={{mx:2}} onClick = {()=>{this.stopCamera()}} variant="contained">stop cam</Button>
+                    <Button sx={{mx:2}} onClick = {()=>{this.startCamera()}} variant="contained">start cam</Button>*/}
                     <FormControl >
                         <InputLabel id="model-select-label">Model type</InputLabel>
                         <Select

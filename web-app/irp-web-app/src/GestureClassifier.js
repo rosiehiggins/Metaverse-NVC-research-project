@@ -137,6 +137,8 @@ export default class GestureClassifier {
             return 0.5
         else if (index === 2)
             return 0.3
+        else if (index === 3)
+            return 0
     }
 
     //set the confidence threshold based on gesture for 60 input
@@ -159,9 +161,8 @@ export default class GestureClassifier {
         let resultTensor = this.model.predict(inputTensor);
         return resultTensor.data()
         .then((result)=>{
-           result[3] = result[3]*2
            let prediction = Math.max(result[0],result[1],result[2],result[3]);
-           console.log("prediction " + prediction);
+           //console.log("prediction " + prediction);
            let index = result.indexOf(prediction);
            let value = 3         
            if(prediction> this.getConfidenceThreshold60(index))
@@ -178,10 +179,8 @@ export default class GestureClassifier {
        let resultTensor = this.model60.predict(inputTensor);
        return resultTensor.data()
        .then((result)=>{
-           //Test to amplify non-gesture result
-           result[3] = result[3]*2
            let prediction = Math.max(result[0],result[1],result[2],result[3]);
-           console.log("prediction " + prediction);
+           //console.log("prediction " + prediction);
            let index = result.indexOf(prediction);
            let value = 3         
            if(prediction> this.getConfidenceThreshold60(index))
