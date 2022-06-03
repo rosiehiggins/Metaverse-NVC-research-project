@@ -15,6 +15,9 @@ import * as mp_hands from '@mediapipe/hands';
 import * as drawing_utils from '@mediapipe/drawing_utils';
 import * as camera_utils from '@mediapipe/camera_utils';
 
+//FPS meter
+import FPSStats from "react-fps-stats";
+
 //App
 import ResultsQueue from './ResultsQueue';
 import GestureClassifier from './GestureClassifier';
@@ -46,8 +49,8 @@ class Main extends React.Component {
         this.startCamera = this.startCamera.bind(this);
 
         //buffer to hold results for each hand
-        this.resultsQueueLeft = new ResultsQueue(8);
-        this.resultsQueueRight = new ResultsQueue(8);
+        this.resultsQueueLeft = new ResultsQueue(6);
+        this.resultsQueueRight = new ResultsQueue(6);
 
         //classifier models
         this.GestureClassifier = new GestureClassifier();
@@ -74,6 +77,7 @@ class Main extends React.Component {
                             "setHandState":(state) =>{if (state !== this.state.rightGesture) {this.setState({rightGesture:state});}},
                             "predictHeuristics": this.GestureHeuristics.predictRight,
                         }};
+
 
 	}	
 
@@ -126,19 +130,20 @@ class Main extends React.Component {
         });
 
 
-        this.predict = true;
-        
+        this.framesToSkip = 4;
+        this.frameCount = 0;
         //
         //Camera
         //
         this.camera = new camera_utils.Camera(videoRef, {
             onFrame: async () => {  
-                    
-                if (this.predict){
+                if (this.frameCount > this.framesToSkip)
+                    this.frameCount = 0
+
+                if (this.frameCount===0){
                     this.t0 =  performance.now();      
                     await this.hands.send({image: videoRef});                
                     let t1 = performance.now();
-    
     
                     let tdiffHands = t1-this.t0;
                     this.handstimes.push(tdiffHands);             
@@ -148,7 +153,7 @@ class Main extends React.Component {
                         this.handstimes = [];
                     }
                 }
-                this.predict = !this.predict;
+                this.frameCount ++;
 
             },
             width: 720,
@@ -285,10 +290,11 @@ class Main extends React.Component {
 	render() {		
 		return (
             <Box sx={{ p: 2, display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
-                <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype</Typography>
+                <FPSStats  top={10} left={10}/>
+                <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype</Typography>               
                 <div style={{position:'relative', width:"720px", height:"438px", margin:10 ,border: '1px solid grey'}}>
                     <video ref={this.videoRef} style={{position:'absolute',width:"100%",height:"100%", transform: this.state.selfieMode ? "scale(-1, 1)" : "scale(1,1)"}}/>               
-                    <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>
+                    <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
                 </div>
                 <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
                     <Button sx={{mx:2}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide keypoints" : "Show keypoints"}</Button>
