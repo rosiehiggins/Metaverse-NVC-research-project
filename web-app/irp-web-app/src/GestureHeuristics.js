@@ -52,9 +52,9 @@ export default class GestureHeuristics {
     isWave(fingerStates,handVelocity,knuckleX,palmY,hand="Right"){
         //fingers straight
         //palm forward
-        //velocity greater than x?        
+        //velocity greater than x?     
         let v = handVelocity*1000;
-        if((v>0.1) &&
+        if((handVelocity>0.1) &&
             (palmY >0.5) &&
             fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] &&
             ((knuckleX>0.4 && hand ==="Right")||(knuckleX<-0.4 && hand ==="Left"))){

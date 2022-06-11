@@ -40,8 +40,10 @@ export default class LandmarksHelper {
         if(timeDiffMs===0)
             return 0
         let D = currentPos.subtract(prevPos);
+        //convert to seconds
+        let s = timeDiffMs/1000
         //return v on the x axis
-        let velocity = D.x/timeDiffMs
+        let velocity = D.x/s;
         return Math.abs(velocity);
     }
     

@@ -220,6 +220,8 @@ def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
     for filename, row in true_df.iterrows():
         frame_range = range(row[0],row[1]+1)
         r = {"r":frame_range,"h":row[2]}
+        #add sequence if sequence
+        
         #if index in frame_ranges
         #append new range onto list
         if filename not in frame_ranges:

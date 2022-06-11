@@ -42,7 +42,7 @@ class Main extends React.Component {
         this.videoRef = React.createRef();
         this.canvasRef = React.createRef();
 
-        //bind event methods to main class
+        //bind UI methods to main class
         this.toggleDisplayLandmarks = this.toggleDisplayLandmarks.bind(this);
         this.handleModelChange = this.handleModelChange.bind(this);
         this.stopCamera = this.stopCamera.bind(this);
@@ -56,7 +56,7 @@ class Main extends React.Component {
         this.GestureClassifier = new GestureClassifier();
         this.GestureHeuristics = new GestureHeuristics();
 
-        //reset state timers
+        //initialise state timers
         this.leftHandTimer = null;
         this.rightHandTimer = null;
         
@@ -82,24 +82,20 @@ class Main extends React.Component {
 	}	
 
     componentDidMount(){
-        //need video element and canvas element
+        //get video html element
         let videoRef = this.videoRef.current
         
         //
-        //Performance variables
+        //Real time performance variables
         //
-        this.times = [];
         this.handstimes = [];
 
-        //benchmarks
         this.benchmarks = {
             "MPTimes": [],
             "Heuristic":[],
             "NeuralNetwork":[],
             "NeuralNetwork60":[]
         }
-
-        this.predict = true;
         
         //
         //load MediaPipe Hands model
@@ -129,9 +125,10 @@ class Main extends React.Component {
             this.predictResults(results)
         });
 
-
-        this.framesToSkip = 4;
+        //Frameskip variables
+        this.framesToSkip = 1;
         this.frameCount = 0;
+
         //
         //Camera
         //
@@ -154,7 +151,6 @@ class Main extends React.Component {
                     }
                 }
                 this.frameCount ++;
-
             },
             width: 720,
             height: 438
@@ -227,8 +223,7 @@ class Main extends React.Component {
                             this.handAPI[hand].resultsQueue.enqueue(prediction);
                             const handstate = this.handAPI[hand].resultsQueue.getResult();
                             this.handAPI[hand].setHandState(this.statesMap[handstate]);                            
-                        }
-                        
+                        }                       
                     })
                     .catch((error)=>{
                         console.log(error)

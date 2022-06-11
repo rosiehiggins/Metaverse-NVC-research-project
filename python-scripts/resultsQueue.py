@@ -1,6 +1,5 @@
 from statistics import mode,multimode
 
-# A Sample class with init method
 class ResultsQueue:
     items=[]
 
