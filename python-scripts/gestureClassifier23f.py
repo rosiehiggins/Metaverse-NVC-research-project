@@ -1,5 +1,5 @@
-#multi class, attempted to improve data again. More opened fingered raise hands. no upright fists
-#going to try train/test split again
+#23 feature multiclass test with default parameters of SGD
+#tweaking early stopping sensitivity
 
 import os
 #manually add dll directories because they can't be found in system path
@@ -11,7 +11,7 @@ from keras.layers import Dense
 from keras.losses import CategoricalCrossentropy
 from keras.callbacks import EarlyStopping
 
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import SGD
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -19,10 +19,11 @@ from sklearn.model_selection import train_test_split
 # define the model
 #note softmax for multiclass, sigmoid for binary
 def GestureClassifier():
-    optimizer = Adam(learning_rate=0.00001)
+    optimizer = SGD()
+
 
     model = Sequential()
-    model.add(Dense(50, input_dim=24, activation="relu"))
+    model.add(Dense(50, input_dim=23, activation="relu"))
     model.add(Dense(50, activation="relu"))
     model.add(Dense(4, activation='softmax'))
     # compile the keras model
@@ -31,28 +32,39 @@ def GestureClassifier():
     return model
 
 #load dataset
-df = pd.read_csv("../training-data/dataset/dataset_multiclass_features8.csv",dtype=np.float32)
-
+df = pd.read_csv("../training-data/dataset/dataset_multiclass_23f.csv",dtype=np.float32)
 
 
 dataset = df.to_numpy()
 #all rows, -1 cols
-X = dataset[:,0:24]
+X = dataset[:,0:23]
 print(X[1:5])
 #all rows, last 4 cols
 Y = dataset[:,-4:]
 print(Y [1:5])
 
+#set up test train split
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y,test_size=0.2,random_state=42)
 
 #create model
 model = GestureClassifier()
 
 #set up early stopping callback
-callback = EarlyStopping(monitor='val_loss', patience=2, min_delta=0.002)
+callback = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0,
+    patience=0,
+    verbose=0,
+    mode="auto",
+    baseline=None,
+    restore_best_weights=True,
+)
+
+#set up early stopping callback
+callback = EarlyStopping(monitor='val_loss', patience=3)
 
 #fit model - look up a good number of epochs and batches
-model.fit(X_train, Y_train, epochs=50, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])
+model.fit(X_train, Y_train, epochs=150, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])
 
 # Evaluate the model on the test data using `evaluate`
 print("Evaluate on test data")
@@ -65,6 +77,6 @@ print("Generate predictions for 3 samples")
 predictions = model.predict(X_test[:3])
 print("predictions shape:", predictions.shape)
 
-
+#show summary and save model
 model.summary()
-model.save(filepath='../model/gestureClassifier/v18/model.h5',)
+model.save(filepath='../model/gestureClassifier/v26/model.h5',)

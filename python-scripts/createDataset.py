@@ -13,7 +13,7 @@ import math
 import random
 from gestureFeatures import angle_two_vectors
 
-#rebuild landmar list from np array
+#rebuild landmark list from np array
 def lm_array_landmarklist(lmarray):
     landmark_list = []
     #build list
@@ -31,7 +31,7 @@ def balance_dataset_by_min(df):
     else:
         return None
 
-
+#convert mediapipe landmark output to numpy array
 def landmarks_tonumpy(landmarks,xscale=1):
     lms = []
     for landmark in landmarks:
@@ -39,7 +39,7 @@ def landmarks_tonumpy(landmarks,xscale=1):
         lms.append(lm_np)
     return lms
 
-
+#convert mediapipe landmakr output to features
 def landmarks_to_features(landmarks,xscale=1):
     features = []
     lms = landmarks_tonumpy(landmarks,xscale)
@@ -151,8 +151,6 @@ def landmarks_to_features(landmarks,xscale=1):
     return features
 
 
-
-
 #flatten landmarks to list
 def landmarks_to_list(landmarks):
     lm_list = []
@@ -180,6 +178,7 @@ def landmarks_to_list_norm(landmarks,scalekp=9,xscale=1):
     scalefactor = 1/(math.sqrt(math.pow(slmt['x'],2) + math.pow(slmt['y'],2) + math.pow(slmt['z'],2)))  
 
     i = 0
+    #normalise and append each landmark x,y and z to landmark list, skip 0 (wrist as always 0,0,0)
     for lms in landmarks:
         if i != 0:
             lm_list.append(((lms.x-wrist_x)*scalefactor)*xscale)
@@ -189,18 +188,14 @@ def landmarks_to_list_norm(landmarks,scalekp=9,xscale=1):
 
     return lm_list
 
-def convert_hand(hand):
+#Return handedness string
+def get_hand_string(hand):
     if hand == "Right":
         return 1
     else: 
         return 0
 
-def flip_hand(hand):
-    if hand == "Right":
-        return "Left"
-    else:
-        return "Right"
-
+#check if given frame number falls with a labelled range
 def in_range(fn,ranges,hand):
     for r in ranges:
         #if frame number in range and hand is the same
@@ -208,8 +203,17 @@ def in_range(fn,ranges,hand):
             return True
     return False
 
-#"../training-data/thumbsups.csv"
-#'file'
+#TODO will at some point improve the data structure for sequences 
+#so this is not necessary
+#Get sequence number from frame ranges
+def get_seq(fn,ranges):
+    for r in ranges:
+        #if frame number in range and hand is the same
+        if fn in r["r"]:
+            return r["s"]
+    return -1
+
+#For each file in list of ranges, map all corresponding ranges to file
 def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
     #load labelled data
     #load in test data 
@@ -221,6 +225,8 @@ def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
         frame_range = range(row[0],row[1]+1)
         r = {"r":frame_range,"h":row[2]}
         #add sequence if sequence
+        if len(row)==4:
+            r["s"] = row[3]
         
         #if index in frame_ranges
         #append new range onto list
@@ -228,10 +234,11 @@ def map_file_to_ranges(pathname,indexcol,usecols=None,dtype=None):
             frame_ranges[filename] = []
         
         frame_ranges[filename].append(r)
-
+        
     return frame_ranges
 
-#"../test-videos/thumbs-up/*"
+#Given location of video files, iterate over each video, pass each frame through MediaPipe
+#save arrays of keypoints for each frame, return data
 def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
     #load files
     true_files = []
@@ -249,6 +256,7 @@ def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
             continue
 
         print(f)
+        
         with mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=0.5,
@@ -306,7 +314,7 @@ def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
                             else:
                                 lm_list = landmarks_to_list(hand_landmarks.landmark)
                                 #add handedness
-                                hand_num = convert_hand(hand)
+                                hand_num = get_hand_string(hand)
                                 lm_list.append(hand_num)  
 
                             #if dataclass is array (multiclass) concatenate else append
@@ -322,8 +330,7 @@ def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
                             data.append(lm_list)
                             count+=1
                         i+=1
-                        
-                
+                                        
                 #show image
                 cv2.imshow('MediaPipe Hands', image)
                 if cv2.waitKey(5) & 0xFF == 27:
@@ -331,7 +338,8 @@ def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
         cap.release()   
     return data
 
-
+#Given location of video files, iterate over each video, pass each frame through MediaPipe
+#save arrays of features for each frame, return data
 def get_feature_data(path,frame_ranges,data_class,class_label=None):
     #load files
     true_files = []
@@ -433,7 +441,8 @@ def get_feature_data(path,frame_ranges,data_class,class_label=None):
 
 
 
-
+#Given location of images files, iterate over each image and pass through MediaPipe
+#save arrays of landmarks for each image, return data
 def get_data_from_images(path,hand,data_class,class_label=None,norm=True):
     #load files
     true_files = []
@@ -473,7 +482,7 @@ def get_data_from_images(path,hand,data_class,class_label=None,norm=True):
                         else:
                             lm_list = landmarks_to_list(hand_landmarks.landmark)
                             #add handedness
-                            hand_num = convert_hand(hand)
+                            hand_num = get_hand_string(hand)
                             lm_list.append(hand_num)                        
 
                         #if dataclass is array (multiclass) concatenate else append
@@ -491,7 +500,8 @@ def get_data_from_images(path,hand,data_class,class_label=None,norm=True):
                     i+=1
     return data  
 
-
+#Given location of images files, iterate over each image and pass through MediaPipe
+#save arrays of features for each image, return data
 def get_feature_data_from_images(path,hand,data_class,class_label=None):
     #load files
     true_files = []
@@ -549,3 +559,103 @@ def get_feature_data_from_images(path,hand,data_class,class_label=None):
                     i+=1
 
     return data23,data60  
+
+#Given location of video files, iterate over each video, pass each frame through MediaPipe
+#save arrays of keypoint sequences for each seq in range, return data
+def get_sequences(path,frame_ranges,norm=True):
+    #load files
+    true_files = []
+    data = {}
+    for file_ in glob.glob(path+"/*"):   
+        file_ =  file_.replace("\\","/")
+        true_files.append(file_)
+
+    for f in true_files:
+        #from https://google.github.io/mediapipe/solutions/hands.html
+        # For webcam input:
+        cap = cv2.VideoCapture(f)
+        if cap.isOpened() == False:
+            print("Error File Not Found")
+            continue
+
+        print(f)
+        with mp_hands.Hands(
+            model_complexity=0,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5,
+            max_num_hands = 2) as hands:
+            
+            count=0
+            while cap.isOpened():        
+                #TODO make processed videos start at 0 not 1        
+                fn = cap.get(cv2.CAP_PROP_POS_FRAMES) + 1
+                success, image = cap.read()
+                if not success:
+                    break
+
+                if f not in frame_ranges:
+                    print("file not in ranges")
+                    break
+
+                # To improve performance, optionally mark the image as not writeable to
+                # pass by reference.
+                image.flags.writeable = False
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+                #infer landmarks from video frame
+                results = hands.process(image)
+
+                # Draw the hand annotations on the image.
+                image.flags.writeable = True
+                image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+                if results.multi_hand_landmarks:
+                    for hand_landmarks in results.multi_hand_landmarks:
+                        mp_drawing.draw_landmarks(
+                            image,
+                            hand_landmarks,
+                            mp_hands.HAND_CONNECTIONS,
+                            mp_drawing_styles.get_default_hand_landmarks_style(),
+                            mp_drawing_styles.get_default_hand_connections_style())
+                
+                if results.multi_hand_world_landmarks:
+                    #index to keep track of handedness
+                    i = 0
+                    for hand_landmarks in results.multi_hand_landmarks:                   
+                        #frame is in result range? and correct hand
+
+                        ranges = frame_ranges[f]
+                        hand = results.multi_handedness[i].classification[0].label
+                        if in_range(fn,ranges,hand):
+
+                            #get seq
+                            seq = get_seq(fn,ranges)
+
+                            #add sequence to data if not in
+                            if seq not in data:
+                                data[seq] = []
+                            
+                            xscale = 1
+                            if hand == "Left":
+                                xscale = -1
+                            #flatten data to array, normalise if norm flag = true
+                            lm_list=[]
+                            if norm:
+                                lm_list = landmarks_to_list_norm(hand_landmarks.landmark,9,xscale)
+                            else:
+                                lm_list = landmarks_to_list(hand_landmarks.landmark)
+                                #add handedness
+                                hand_num = get_hand_string(hand)
+                                lm_list.append(hand_num)  
+                                  
+                            #add to dataset
+                            data[seq].append(lm_list)
+                            print("adding to seq " + str(seq))
+                            count+=1
+                        i+=1
+                                       
+                #show image
+                cv2.imshow('MediaPipe Hands', image)
+                if cv2.waitKey(5) & 0xFF == 27:
+                    break
+        cap.release()   
+    return data

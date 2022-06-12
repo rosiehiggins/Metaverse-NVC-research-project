@@ -1,4 +1,4 @@
-#60 feature classifier to compare to the 23 feature one
+#60 feature multiclass test with default parameters of SGD
 
 import os
 #manually add dll directories because they can't be found in system path
@@ -10,7 +10,7 @@ from keras.layers import Dense
 from keras.losses import CategoricalCrossentropy
 from keras.callbacks import EarlyStopping
 
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import SGD
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -18,7 +18,7 @@ from sklearn.model_selection import train_test_split
 # define the model
 #note softmax for multiclass, sigmoid for binary
 def GestureClassifier():
-    optimizer = Adam(learning_rate=0.00001)
+    optimizer = SGD()
 
     model = Sequential()
     model.add(Dense(50, input_dim=60, activation="relu"))
@@ -31,8 +31,6 @@ def GestureClassifier():
 
 #load dataset
 df = pd.read_csv("../training-data/dataset/dataset_multiclass_60f.csv",dtype=np.float32)
-#previous datasets in this version
-#"../training-data/dataset/dataset_multiclass_normalised.csv"
 
 dataset = df.to_numpy()
 #all rows, -1 cols
@@ -42,13 +40,22 @@ print(X[1:5])
 Y = dataset[:,-4:]
 print(Y [1:5])
 
+#set up test train split
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y,test_size=0.2,random_state=42)
 
 #create model
 model = GestureClassifier()
 
 #set up early stopping callback
-callback = EarlyStopping(monitor='val_loss', patience=2, min_delta=0.002)
+callback = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0,
+    patience=0,
+    verbose=0,
+    mode="auto",
+    baseline=None,
+    restore_best_weights=True,
+)
 
 #fit model - look up a good number of epochs and batches
 model.fit(X_train, Y_train, epochs=100, batch_size=10,validation_data=(X_test, Y_test), callbacks=[callback])
@@ -64,7 +71,7 @@ print("Generate predictions for 3 samples")
 predictions = model.predict(X_test[:3])
 print("predictions shape:", predictions.shape)
 
-
+#show summary and save model
 model.summary()
-model.save(filepath='../model/gestureClassifier/v23/model.h5',)
-#previous models v21
+model.save(filepath='../model/gestureClassifier/v25/model.h5',)
+

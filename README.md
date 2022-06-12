@@ -1,3 +1,15 @@
+# Non verbal communication for 3D virtual worlds
+
+## Contents
+
+1. model
+2. python-scripts
+3. results
+4. test-data
+5. training-data
+6. web-app
+
+
 # web-app
 
 ## Installation

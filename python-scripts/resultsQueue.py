@@ -25,15 +25,8 @@ class ResultsQueue:
             return 0
         mode_ = mode(self.items)        
         return mode_
-        #modes = multimode(self.items)
-        #print("modes")
-        #print(modes)
-        #front = self.front()
-        #if len(modes)>1 and front in modes:
-            #return front
-        #else:
-           #return modes[0]
 
+    #return front of queue
     def front(self):
         if len(self.items) == 0:
             return "empty"
