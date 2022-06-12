@@ -9,10 +9,26 @@
 5. training-data
 6. web-app
 
+## model
 
-# web-app
+Weights files (h5) for for 23 and 60 input ANN models trained in Keras
 
-## Installation
+## python-scripts
+Contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested
+
+version prerequisite for TensorFlow v 3.7-3.10
+
+## results
+Contains confusion matrices for all tests of classification performance and outputs of speed tests as JSON
+
+## test-data
+
+## training-data
+
+## web-app
+
+
+### Installation
 To run locally
 install npm
 go to web-app/irp-web-app
@@ -21,15 +37,10 @@ npm install in this directory to install packages
 to start test server go npm start
 to try live version of web-app go to: https://metaversenvcdemo.web.app/
 
-## Usage
 
+### model coversion instructions
 
-#Python
-version prerequisite for TensorFlow v 3.7-3.10
-
-#Model
-
-## model coversion instructions
+How to use tensorFlow.js converter to convert h5 model to tensorFlow.js web version
 
 install pyenv
 install python v.6
