@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 from createDataset import lm_array_landmarklist
-from gestureHeuristics import predict
+import gestureHeuristics as gh
 
 #load test set
 df = pd.read_csv("../test-data/dataset/raw_testset.csv")
@@ -16,12 +16,16 @@ X_true = dataset[:,0:64]
 Y_true = dataset[:,-1]
 
 Y_pred = []
+
+#initialise gesture heuristics class
+gestureHeuristics = gh.GestureHeuristics()
+
 #iterate over x and get predictions
 i= 0
 for hand in X_true:
     landmarks = lm_array_landmarklist(hand[:-1])
     handedness = hand[-1]
-    prediction = predict(landmarks,handedness)   
+    prediction = gestureHeuristics.predict(landmarks,handedness)   
     Y_pred.append(prediction)
     i+=1
 
@@ -40,4 +44,4 @@ cm_df = pd.DataFrame(cm,
                     
 print(cm_df)
 
-cm_df.to_csv("../results/heuristic-results/confusion_matrix_test.csv")
+cm_df.to_csv("../results/heuristic-results/confusion_matrix_static.csv")

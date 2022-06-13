@@ -53,7 +53,6 @@ export default class GestureHeuristics {
         //fingers straight
         //palm forward
         //velocity greater than x?     
-        let v = handVelocity*1000;
         if((handVelocity>0.1) &&
             (palmY >0.5) &&
             fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] &&

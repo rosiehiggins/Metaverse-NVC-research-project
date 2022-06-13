@@ -14,7 +14,7 @@ def angle_two_vectors(seg0,seg1):
     return angle
 
 #Get directional vector given two landmarks
-def getDirection(lA,lB):
+def get_direction(lA,lB):
     A = np.array([lA['x'],lA['y'],lA['z']])
     B = np.array([lB['x'],lB['y'],lB['z']])
     direction = (B-A)/np.linalg.norm(B-A)
@@ -22,7 +22,7 @@ def getDirection(lA,lB):
 
 #input finger landmarks A,B,C,D
 #output boolean indicating whether finger is straight
-def getFingerStraight(A,B,C,D):
+def get_finger_straight(A,B,C,D):
     #create numpy 3D arrays from landmarks
     A = np.array([A['x'],A['y'],A['z']])
     B = np.array([B['x'],B['y'],B['z']])
@@ -43,16 +43,27 @@ def getFingerStraight(A,B,C,D):
         return False
 
 #returns an array of finger states to be used to calculate heuristics
-def getFingerStates(landmarks):
-        fingerStates = []
-        index = getFingerStraight(landmarks[5],landmarks[6],landmarks[7],landmarks[8])   
-        middle = getFingerStraight(landmarks[9],landmarks[10],landmarks[11],landmarks[12])
-        ring = getFingerStraight(landmarks[13],landmarks[14],landmarks[15],landmarks[16])
-        little = getFingerStraight(landmarks[17],landmarks[18],landmarks[19],landmarks[20])
+def get_finger_states(landmarks):
+    fingerStates = []
+    index = get_finger_straight(landmarks[5],landmarks[6],landmarks[7],landmarks[8])   
+    middle = get_finger_straight(landmarks[9],landmarks[10],landmarks[11],landmarks[12])
+    ring = get_finger_straight(landmarks[13],landmarks[14],landmarks[15],landmarks[16])
+    little = get_finger_straight(landmarks[17],landmarks[18],landmarks[19],landmarks[20])
 
-        fingerStates.append(index)
-        fingerStates.append(middle)
-        fingerStates.append(ring)
-        fingerStates.append(little)
+    fingerStates.append(index)
+    fingerStates.append(middle)
+    fingerStates.append(ring)
+    fingerStates.append(little)
 
-        return fingerStates 
+    return fingerStates 
+
+#returns velocity on the x axis for a given landmark
+def get_x_velocity(current_pos,prev_pos,timediff_ms):
+        if timediff_ms == 0:
+            return 0
+        D = current_pos - prev_pos
+        #convert to seconds
+        s = timediff_ms/1000
+        #return v on the x axis
+        velocity = D[0]/s
+        return abs(velocity)

@@ -1,16 +1,22 @@
 //BabylonJs for Vector maths
 import {Vector3} from "@babylonjs/core";
 
+//
+// Helper class for calculating properties from MediaPipe hand landmarks
+//
+
 export default class LandmarksHelper {
 	
 	constructor(){
 
 	}
 
+    //Converts MediaPipe landmark object to BabylonJs Vector 3
     landmarkToVector(landmark){
         return new Vector3(landmark.x,landmark.y,landmark.z);
     }
 	
+    //Given three landmarks calculate the angle between them
     getAngleBetweenLandmarks(lm0,lm1,lm2){
         let A = this.landmarkToVector(lm0);
         let B = this.landmarkToVector(lm1);
@@ -27,6 +33,7 @@ export default class LandmarksHelper {
         return angleNorm;
     }
 
+    //given 2 landmarks calculate directional vector
     getDirectionVector(lm0,lm1){
         let A = this.landmarkToVector(lm0);
         let B = this.landmarkToVector(lm1);
@@ -36,6 +43,8 @@ export default class LandmarksHelper {
         return BAnorm
     }
 
+    //Given current position and previous position of a landmark
+    //and a time diff in ms, calculate the velocity on the x axis
     getXVelocity(currentPos,prevPos,timeDiffMs){
         if(timeDiffMs===0)
             return 0
@@ -51,6 +60,8 @@ export default class LandmarksHelper {
     //methods for getting finger states: angle and collinear variants
     //
 
+    //calculate finger states given array of landmarks : angle variant
+    //returns boolean array containing 4 finger states [index,middle,ring,little]
     getFingerStatesAngle(landmarks){
         const getFingerAngle= (landmarks) =>{
             //approach from mp paper max angle of finger segment
@@ -132,6 +143,8 @@ export default class LandmarksHelper {
         return states;
     }
 
+    //calculate finger states given array of landmarks : collinear variant
+    //returns boolean array containing 4 finger states [index,middle,ring,little]
 	getFingerStatesCollinear(landmarks){
         //input array of landmarks [A,B,C,D]
         const getFingerStraight = (landmarks) =>{

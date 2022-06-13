@@ -1,9 +1,8 @@
+#Script to split heuristics test set into same split as ANNs
 
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
-
-
 
 df = pd.read_csv("../training-data/dataset/dataset_multiclass_raw.csv",encoding="utf-8")
 #print(df.head())

@@ -188,8 +188,8 @@ def landmarks_to_list_norm(landmarks,scalekp=9,xscale=1):
 
     return lm_list
 
-#Return handedness string
-def get_hand_string(hand):
+#Return handedness int
+def get_hand_int(hand):
     if hand == "Right":
         return 1
     else: 
@@ -314,7 +314,7 @@ def get_data(path,frame_ranges,data_class,class_label=None,norm=True):
                             else:
                                 lm_list = landmarks_to_list(hand_landmarks.landmark)
                                 #add handedness
-                                hand_num = get_hand_string(hand)
+                                hand_num = get_hand_int(hand)
                                 lm_list.append(hand_num)  
 
                             #if dataclass is array (multiclass) concatenate else append
@@ -482,7 +482,7 @@ def get_data_from_images(path,hand,data_class,class_label=None,norm=True):
                         else:
                             lm_list = landmarks_to_list(hand_landmarks.landmark)
                             #add handedness
-                            hand_num = get_hand_string(hand)
+                            hand_num = get_hand_int(hand)
                             lm_list.append(hand_num)                        
 
                         #if dataclass is array (multiclass) concatenate else append
@@ -644,7 +644,7 @@ def get_sequences(path,frame_ranges,norm=True):
                             else:
                                 lm_list = landmarks_to_list(hand_landmarks.landmark)
                                 #add handedness
-                                hand_num = get_hand_string(hand)
+                                hand_num = get_hand_int(hand)
                                 lm_list.append(hand_num)  
                                   
                             #add to dataset

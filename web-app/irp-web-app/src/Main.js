@@ -286,7 +286,7 @@ class Main extends React.Component {
 		return (
             <Box sx={{ p: 2, display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
                 <FPSStats  top={10} left={10}/>
-                <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype</Typography>               
+                <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype 👍👌✋👋</Typography>               
                 <div style={{position:'relative', width:"720px", height:"438px", margin:10 ,border: '1px solid grey'}}>
                     <video ref={this.videoRef} style={{position:'absolute',width:"100%",height:"100%", transform: this.state.selfieMode ? "scale(-1, 1)" : "scale(1,1)"}}/>               
                     <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
