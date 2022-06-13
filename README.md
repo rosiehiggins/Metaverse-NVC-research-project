@@ -9,6 +9,7 @@
 5. training-data
 6. web-app
 
+```
 .
 ├── models                  # Saved Keras ANN model files
 │   ├── 23-input            # Model file for 23 input ANN
@@ -16,20 +17,20 @@
 ├── python-scripts          # Contains Python code used for data preprocessing, testing and training models
 │   ├── demos               # Demos for each hand, face and body pose model tested
 │   └── plots               # Code to generate plots for results
-├── results
-│   ├── heuristic-results   # Load and stress tests
-│   ├── ANN-results         # End-to-end, integration tests (alternatively `e2e`)
-│   └── realtime-perf       # Source files (alternatively `lib` or `app`)
-├── test-data               # Automated tests (alternatively `spec` or `tests`)
-├── training-data
+├── results                 # csv files containing results from performance evaluation
+│   ├── heuristic-results   # confusion matrices with heuristic results
+│   ├── ANN-results         # confusion matrices with ANN results
+│   └── realtime-perf       # JSON containing execution times from protoype testing
+├── test-data               # Test datasets used for heuristic testing
+├── training-data           # All landmark datasets created from video and image files
 │   └── dataset             # Source files (alternatively `lib` or `app`)    
-├── web-app                 # Tools and utilities
-│   └── irp-web-app         # Source files (alternatively `lib` or `app`)
-│       ├── .firebase       # Load and stress tests
+├── web-app                 # Web app prototype
+│   └── irp-web-app         # Client directory
 │       ├── build           # End-to-end, integration tests (alternatively `e2e`)
 │       ├── public          # End-to-end, integration tests (alternatively `e2e`)
 │       └── src             # Source files (alternatively `lib` or `app`)     
 └── README.md
+```
 
 ## model
 
