@@ -14,6 +14,7 @@
 Weights files (h5) for for 23 and 60 input ANN models trained in Keras
 
 ## python-scripts
+
 Contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested
 
 version prerequisite for TensorFlow v 3.7-3.10
@@ -29,6 +30,7 @@ Contains confusion matrices for all tests of classification performance and outp
 
 
 ### Installation
+
 To run locally
 install npm
 go to web-app/irp-web-app
@@ -46,6 +48,7 @@ Useful blog: https://medium.com/@mandava807/importing-a-keras-model-into-tensorf
 See: https://github.com/tensorflow/tfjs/tree/master/tfjs-converter
 
 ##### Steps:
+
 install pyenv : https://github.com/pyenv-win/pyenv-win
 Then set up your local python to be 3.6.8
 pyenv install 3.6.8
@@ -58,18 +61,25 @@ Then set up a virtual environment, see: https://docs.python.org/3/library/venv.h
 python3 -m venv /path/to/new/virtual/environment
 
 The activate virtual env by running activate script
-run venv/Scripts/activate.bat
+cd venv
+cd Scripts
+activate.bat
 
-NOTE!! in Windows 10 you need to run ./activate.PS1
-and you may need to set permissions see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
+**NOTE!!** in Windows 10 powershell you need to run ./activate.PS1
+and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
 
-within venv: command to convert model
+once activated in Windows Powershell you will see a little "(venv)" before the directory name
+next install tensorflowjs in your venv 
+
+pip install tensorflowjs
+
+Then you can convert model using either converter or wizard, converter is used here:
 tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
 
 e.g.
 tensorflowjs_converter --input_format keras model/model.h5 model/converted
 
-The JSON contains the model architecture and the binary file contains the weights.
+The output JSON contains the model architecture and the binary file contains the weights, both are needed in the webapp
 
 
 
