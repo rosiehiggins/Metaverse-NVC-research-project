@@ -35,7 +35,7 @@ plt.show()
 
 
 #neural network table - feature set
-cm_df = pd.read_csv("../../results/neuralnetwork-results/confusion_matrix_23.csv",index_col=0,dtype= {"thumbs-up": np.int32, "raise-hand": np.int32, "ok": np.int32,"non-gesture": np.int32})
+cm_df = pd.read_csv("../../results/ANN-results/confusion_matrix_23.csv",index_col=0,dtype= {"thumbs-up": np.int32, "raise-hand": np.int32, "ok": np.int32,"non-gesture": np.int32})
 
 print(cm_df)
 
@@ -48,7 +48,7 @@ plt.xlabel('Predicted Values')
 plt.show()
 
 
-cm_df = pd.read_csv("../../results/neuralnetwork-results/confusion_matrix_60.csv",index_col=0,dtype= {"thumbs-up": np.int32, "raise-hand": np.int32, "ok": np.int32,"non-gesture": np.int32})
+cm_df = pd.read_csv("../../results/ANN-results/confusion_matrix_60.csv",index_col=0,dtype= {"thumbs-up": np.int32, "raise-hand": np.int32, "ok": np.int32,"non-gesture": np.int32})
 
 print(cm_df)
 

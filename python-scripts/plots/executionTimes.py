@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import json
 
 # Opening execution times JSON
-with open('../../results/realtime-performance/execution_times.json') as json_file:
+with open('../../results/realtime-perf/execution_times.json') as json_file:
     data = json.load(json_file)
 
 df = pd.DataFrame.from_dict(data)

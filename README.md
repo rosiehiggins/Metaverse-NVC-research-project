@@ -9,6 +9,28 @@
 5. training-data
 6. web-app
 
+.
+├── models                  # Saved Keras ANN model files
+│   ├── 23-input            # Model file for 23 input ANN
+│   └── 60-input            # Model file for 60 input ANN
+├── python-scripts          # Contains Python code used for data preprocessing, testing and training models
+│   ├── demos               # Demos for each hand, face and body pose model tested
+│   └── plots               # Code to generate plots for results
+├── results
+│   ├── heuristic-results   # Load and stress tests
+│   ├── ANN-results         # End-to-end, integration tests (alternatively `e2e`)
+│   └── realtime-perf       # Source files (alternatively `lib` or `app`)
+├── test-data               # Automated tests (alternatively `spec` or `tests`)
+├── training-data
+│   └── dataset             # Source files (alternatively `lib` or `app`)    
+├── web-app                 # Tools and utilities
+│   └── irp-web-app         # Source files (alternatively `lib` or `app`)
+│       ├── .firebase       # Load and stress tests
+│       ├── build           # End-to-end, integration tests (alternatively `e2e`)
+│       ├── public          # End-to-end, integration tests (alternatively `e2e`)
+│       └── src             # Source files (alternatively `lib` or `app`)     
+└── README.md
+
 ## model
 
 Contains weights (h5) output files for both 23f and 60f Keras ANN models.
@@ -18,7 +40,6 @@ Contains weights (h5) output files for both 23f and 60f Keras ANN models.
 *version prerequisite for TensorFlow v 3.7-3.10*
 
 This folder contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested
-
 
 
 ## results
