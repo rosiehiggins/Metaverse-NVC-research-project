@@ -2,13 +2,15 @@
 
 ## Contents
 
-1. Folder hierarchy 
+1. File hierarchy 
 2. model
 3. python-scripts
 4. results
 5. test-data
 6. training-data
 7. web-app
+
+## File Hierarchy
 
 ```
 .
@@ -49,7 +51,14 @@ Contains weights (h5) output files for both 23f and 60f Keras ANN models.
 
 *version prerequisite for TensorFlow v 3.7-3.10*
 
-This folder contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested
+Contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested.
+
+* **createDataset.py**:
+* **generateANNDatasets.py**
+* **generateHeuristicsDataset.py**
+* **generateWaveSequences.py**
+* **gestureClassifier23f.py**
+
 
 
 ## results
