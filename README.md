@@ -2,12 +2,13 @@
 
 ## Contents
 
-1. model
-2. python-scripts
-3. results
-4. test-data
-5. training-data
-6. web-app
+1. Folder hierarchy 
+2. model
+3. python-scripts
+4. results
+5. test-data
+6. training-data
+7. web-app
 
 ```
 .
@@ -26,9 +27,17 @@
 │   └── dataset             # Source files (alternatively `lib` or `app`)    
 ├── web-app                 # Web app prototype
 │   └── irp-web-app         # Client directory
-│       ├── build           # End-to-end, integration tests (alternatively `e2e`)
-│       ├── public          # End-to-end, integration tests (alternatively `e2e`)
-│       └── src             # Source files (alternatively `lib` or `app`)     
+│       ├── build           # built web app (what is deployed to firebase)
+│       ├── public          # local public folder with assets and model
+│       │   ├── assets      # hand gesture images used in prototype
+│       │   └── model       # tensorflow.js converted models are here
+│       └── src                       # Source code files for prototype app
+│           ├── ResultsQueue.js       # FIFO queue to hold prediction results
+│           ├── Main.js               # Main page in prototype containing UI elements and MediaPipe
+│           ├── LandmarksHelper.js    # Helper class for calculating hand landmark properties
+│           ├── GestureHeuristics.js  # Contains heuristic calculations and prediction method for heuristics
+│           ├── GestureClassifier.js  # Loads Keras ANN models and runs predictions
+│           └── App.js                # Main app (would hold routes to pages if app expanded)
 └── README.md
 ```
 
@@ -51,6 +60,7 @@ Contains test datasets for heuristics,
 Test data for ANNs was split in place during training with the same random seed
 
 ## training-data
+Contains all landmark datasets created from video and image files
 
 ## web-app
 
