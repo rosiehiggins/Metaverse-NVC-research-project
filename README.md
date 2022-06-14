@@ -94,8 +94,8 @@ Contains all landmark datasets generated from passing video and image files thro
 
 ## web-app
 
-Contains source code for web app prototype, for main app source code go to /src
-The following files in source were developed:
+Contains source code for web app prototype, for main app source code go to irp-web-app/src
+The following javaScript files contain the source code for the prototype:
 
 * **ResultsQueue.js**: Class which defines FIFO queue to hold prediction results, getResult returns the mode result each frame to smooth signal
 * **Main.js**: Main class containing all UI components and MediaPipe Hands model
@@ -126,6 +126,7 @@ How to use tensorFlow.js converter to convert Keras model to tensorFlow.js web v
 Useful blog: https://medium.com/@mandava807/importing-a-keras-model-into-tensorflow-js-b09600a95e40
 
 See: https://github.com/tensorflow/tfjs/tree/master/tfjs-converter
+
 **Note** to run converter we need to use python 3.6.8, this clashes with the tensor-flow  requirement of 3.7-3.10
 So we need to run converter from virtual env
 
@@ -152,15 +153,15 @@ The activate virtual env by running activate script
 - cd Scripts
 - activate.bat
 
-**NOTE!!** in Windows 10 powershell you need to run ./activate.PS1
-and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
+**NOTE!!** in Windows 10 powershell you need to run ./activate.PS1 and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
 
-once activated in Windows Powershell you will see a little "(venv)" before the directory name
+Once activated in Windows Powershell you will see a little *(venv)* before the directory name
 next install tensorflowjs in your venv 
 
 - pip install tensorflowjs
 
-Then you can convert model using either converter or wizard, converter is used here:
+Then you can convert model using either converter or wizard, converter example:
+
 - tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
 
 e.g.

@@ -63,6 +63,10 @@ export default class ResultsQueue {
         this.items = arr;
     }
 
+    setMaxLength(max){
+        this.maxLength = max;
+    }
+
     mode(items) {
         // as result can be bimodal or multi-modal,
         // the returned result is provided as an array
