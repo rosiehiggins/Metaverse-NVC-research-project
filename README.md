@@ -1,5 +1,9 @@
 # Non verbal communication for 3D virtual worlds
 
+## Live version of prototype
+
+https://metaversenvcdemo.web.app/
+
 ## Contents
 
 1. Project Hierarchy
@@ -101,18 +105,19 @@ The following files in source were developed:
 
 ### Installation
 
-To run locally
-Install npm then:
--cd web-app
--cd irp-web-app
--npm install
+To run locally, 
 
-To start test server run:
--npm start
+Install  node.js and npm (https://radixweb.com/blog/installing-npm-and-nodejs-on-windows-and-mac) then in irp-web-app directory (web-app/irp-web-app) run: 
 
-go to http://localhost:3000
+- npm install
 
-Or go to live version here: https://metaversenvcdemo.web.app/
+This will install all required packages, then to start test server run:
+
+- npm start
+
+and go to http://localhost:3000
+
+Or simply go to live version here: https://metaversenvcdemo.web.app/
 
 
 ### Keras model conversion instructions
@@ -127,20 +132,25 @@ So we need to run converter from virtual env
 #### Steps:
 
 install pyenv : https://github.com/pyenv-win/pyenv-win
+
 Then set up your local python to be 3.6.8
--pyenv install 3.6.8
--pyenv local 3.6.8
+
+- pyenv install 3.6.8
+- pyenv local 3.6.8
 
 Install virtualenv: https://stackoverflow.com/questions/48911582/virtualenv-to-path-on-windows-10
--pip install --user virtualenv
+
+- pip install --user virtualenv
 
 Then set up a virtual environment, see: https://docs.python.org/3/library/venv.html
--python3 -m venv /path/to/new/virtual/environment
+
+- python3 -m venv /path/to/new/virtual/environment
 
 The activate virtual env by running activate script
--cd venv
--cd Scripts
--activate.bat
+
+- cd venv
+- cd Scripts
+- activate.bat
 
 **NOTE!!** in Windows 10 powershell you need to run ./activate.PS1
 and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
@@ -148,15 +158,15 @@ and you may need to set permissions, see this post for more info: https://stacko
 once activated in Windows Powershell you will see a little "(venv)" before the directory name
 next install tensorflowjs in your venv 
 
--pip install tensorflowjs
+- pip install tensorflowjs
 
 Then you can convert model using either converter or wizard, converter is used here:
--tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
+- tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
 
 e.g.
 tensorflowjs_converter --input_format keras model/model.h5 model/converted
 
-The output JSON contains the model architecture and the binary file contains the weights, both are needed in the webapp
+The output JSON contains the model architecture and the binary file contains the weights, both are needed in the web app
 
 
 

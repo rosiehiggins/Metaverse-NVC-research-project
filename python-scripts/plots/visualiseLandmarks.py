@@ -6,9 +6,9 @@ fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
 #load data points
-lms = np.genfromtxt('../../tests/datapoints.csv', delimiter=',')
+lms = np.genfromtxt('landmarks_example.csv', delimiter=',')
 
-#unnomalised landmarks
+#raw landmarks
 lms_ = lms[0]
 
 xs = lms_[::3]
@@ -28,7 +28,7 @@ z0s = lms_norm0[2::3]
 ax.scatter(x0s, y0s, z0s, marker='^')
 
 
-# #translation and scale invariant landmarks
+#translation and scale invariant landmarks
 lms_norm1 = lms[2]
 
 x1s = lms_norm1[::3]
