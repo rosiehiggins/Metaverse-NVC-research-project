@@ -39,8 +39,11 @@ class GestureHeuristics:
         else:
             return False
 
+    #Used to clear previous position each time a new sequence begins
     def clear_prev_pos(self):
         self.prev_pos = np.zeros(3)
+
+    '''Predict gesture given landmarks and handeness'''
 
     def predict(self,landmarks,hand):
         #finger states array

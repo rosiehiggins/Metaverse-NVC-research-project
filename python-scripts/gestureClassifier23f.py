@@ -79,4 +79,4 @@ print("predictions shape:", predictions.shape)
 
 #show summary and save model
 model.summary()
-model.save(filepath='../model/gestureClassifier/v26/model.h5',)
+model.save(filepath='../model/23-input/model.h5',)

@@ -6,18 +6,18 @@ export default class GestureClassifier {
 	constructor(){
         this.modelLoaded = false;
         //load 23 input model
-        tf.loadLayersModel('model/v26/model.json')
+        tf.loadLayersModel('model/23-input/model.json')
         .then((model)=>{
             this.model = model;
             this.modelLoaded = true;
-            console.log("model 23 loaded" + this.modelLoaded + "v26");
+            console.log("model 23 loaded" + this.modelLoaded );
         })    
         //load 60 input model
-        tf.loadLayersModel('model/v25/model.json')
+        tf.loadLayersModel('model/60-input/model.json')
         .then((model)=>{
             this.model60 = model;
             this.model60Loaded = true;
-            console.log("model 60 loaded" + this.model60Loaded + "v25");
+            console.log("model 60 loaded" + this.model60Loaded);
         })    
         //landmarks helper functions
         this.landmarksHelper = new LandmarksHelper(); 

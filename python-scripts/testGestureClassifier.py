@@ -8,9 +8,6 @@ from keras.models import load_model
 from keras.layers import Dense
 import numpy as np
 import pandas as pd
-from scipy import interp
-import matplotlib.pyplot as plt
-from itertools import cycle
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import multilabel_confusion_matrix
