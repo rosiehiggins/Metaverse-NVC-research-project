@@ -109,11 +109,15 @@ To run locally,
 
 Install  node.js and npm (https://radixweb.com/blog/installing-npm-and-nodejs-on-windows-and-mac) then in irp-web-app directory (web-app/irp-web-app) run: 
 
+```
 - npm install
+```
 
 This will install all required packages, then to start test server run:
 
-- npm start
+```
+npm start
+```
 
 and go to http://localhost:3000
 
@@ -136,33 +140,48 @@ install pyenv : https://github.com/pyenv-win/pyenv-win
 
 Then set up your local python to be 3.6.8
 
-- pyenv install 3.6.8
-- pyenv local 3.6.8
+```
+pyenv install 3.6.8
+
+pyenv local 3.6.8
+```
 
 Install virtualenv: https://stackoverflow.com/questions/48911582/virtualenv-to-path-on-windows-10
 
-- pip install --user virtualenv
+```
+pip install --user virtualenv
+```
 
 Then set up a virtual environment, see: https://docs.python.org/3/library/venv.html
 
-- python3 -m venv /path/to/new/virtual/environment
+
+```
+python3 -m venv /path/to/new/virtual/environment
+```
 
 The activate virtual env by running activate script
 
-- cd venv
-- cd Scripts
-- activate.bat
+```
+cd venv
+cd Scripts
+activate.bat
+```
 
 **NOTE!!** in Windows 10 powershell you need to run ./activate.PS1 and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
 
 Once activated in Windows Powershell you will see a little *(venv)* before the directory name
-next install tensorflowjs in your venv 
 
-- pip install tensorflowjs
+next install tensorflowjs in your venv, install pip first if needed!
+
+```
+pip install tensorflowjs
+```
 
 Then you can convert model using either converter or wizard, converter example:
 
-- tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
+```
+tensorflowjs_converter --input_format keras model/pathname/model.h5 converted/model/pathname
+```
 
 e.g.
 tensorflowjs_converter --input_format keras model/model.h5 model/converted
