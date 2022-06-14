@@ -95,6 +95,7 @@ Contains all landmark datasets generated from passing video and image files thro
 ## web-app
 
 Contains source code for web app prototype, for main app source code go to irp-web-app/src
+
 The following javaScript files contain the source code for the prototype:
 
 * **ResultsQueue.js**: Class which defines FIFO queue to hold prediction results, getResult returns the mode result each frame to smooth signal
@@ -110,7 +111,7 @@ To run locally,
 Install  node.js and npm (https://radixweb.com/blog/installing-npm-and-nodejs-on-windows-and-mac) then in irp-web-app directory (web-app/irp-web-app) run: 
 
 ```
-- npm install
+npm install
 ```
 
 This will install all required packages, then to start test server run:
@@ -142,7 +143,6 @@ Then set up your local python to be 3.6.8
 
 ```
 pyenv install 3.6.8
-
 pyenv local 3.6.8
 ```
 
