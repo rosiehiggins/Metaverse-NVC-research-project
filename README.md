@@ -18,6 +18,7 @@ https://metaversenvcdemo.web.app/
 
 ```
 .
+├── demo-video                  # Prototype demo video
 ├── ethics-documents            
 │   ├── fast-track-ethics-form  # Signed fast-track ethics form
 │   └── participant-docs        # Information sheet and consent form give to participants
@@ -60,10 +61,11 @@ Contains weights (h5) output files for both 23f and 60f Keras ANN models.
 ## python-scripts
 
 **Notes**
-* version prerequisite for TensorFlow v 3.7-3.10
-* libraries required: numpy, pandas, scikit-learn, keras, mediapipe, matplotlib, cv2, tensorflow
+* Python version prerequisite for TensorFlow  is v 3.7-3.10
+* Libraries required: numpy, pandas, scikit-learn, keras, mediapipe, matplotlib, cv2, tensorflow
 
 This folder Contains all python scripts used in the project for data pre-processing, training ANN, testing and evaluating heuristics, generating plots, calculating test metrics and demos of all hand and body pose models tested.
+
 Scripts within the root folder are listed below:
 
 * **createDataset.py**: Python module for carrying out operations on data, including functions for passing video files through Mediapipe and outputting landmarks
@@ -106,7 +108,7 @@ The following javaScript files contain the source code for the prototype:
 
 ### Installation
 
-To run locally, 
+To run locally:
 
 Install  node.js and npm (https://radixweb.com/blog/installing-npm-and-nodejs-on-windows-and-mac) then in irp-web-app directory (web-app/irp-web-app) run: 
 
@@ -128,7 +130,8 @@ Or simply go to live version here: https://metaversenvcdemo.web.app/
 ### Keras model conversion instructions
 
 How to use tensorFlow.js converter to convert Keras model to tensorFlow.js web version
-Useful blog: https://medium.com/@mandava807/importing-a-keras-model-into-tensorflow-js-b09600a95e40
+
+Useful blog on the matter: https://medium.com/@mandava807/importing-a-keras-model-into-tensorflow-js-b09600a95e40
 
 See: https://github.com/tensorflow/tfjs/tree/master/tfjs-converter
 
@@ -167,7 +170,7 @@ cd Scripts
 activate.bat
 ```
 
-**NOTE!!** in Windows 10 powershell you need to run ./activate.PS1 and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
+**NOTE!!** in Windows 10 Powershell you need to run ./activate.PS1 and you may need to set permissions, see this post for more info: https://stackoverflow.com/questions/18713086/virtualenv-wont-activate-on-windows
 
 Once activated in Windows Powershell you will see a little *(venv)* before the directory name
 

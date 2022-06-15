@@ -306,7 +306,7 @@ class Main extends React.Component {
                     <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
                 </div>
                 <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
-                    <Button sx={{mx:1}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide keypoints" : "Show keypoints"}</Button>
+                    <Button sx={{mx:1}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide landmarks" : "Show landmarks"}</Button>
                     <FormControl >
                         <InputLabel id="frame-skip">Frame skip</InputLabel>
                         <Select
@@ -336,8 +336,8 @@ class Main extends React.Component {
                         onChange={(e)=>this.handleModelChange(e.target.value)}
                         >
                             <MenuItem value={"Heuristic"}>Heuristic</MenuItem>
-                            <MenuItem value={"NeuralNetwork"}>Neural net 23 input</MenuItem>
-                            <MenuItem value={"NeuralNetwork60"}>Neural net 60 input</MenuItem>
+                            <MenuItem value={"NeuralNetwork"}>ANN 23 input</MenuItem>
+                            <MenuItem value={"NeuralNetwork60"}>ANN 60 input</MenuItem>
                         </Select>
                     </FormControl>                    
                     <Box sx={{display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column", }}>
