@@ -26,7 +26,8 @@ https://metaversenvcdemo.web.app/
 ├── models                      # Saved Keras ANN model files
 │   ├── 23-input                
 │   └── 60-input                
-├── python-scripts              # Contains Python code used for data preprocessing, testing and training models
+├── python-scripts              # Contains Python code used for data preprocessing, 
+│                               # testing and training models
 │   ...
 │   ├── demos                   # Demos for each hand, face and body pose model tested
 │   └── plots                   # Code to generate plots for results
