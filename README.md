@@ -38,7 +38,7 @@ https://metaversenvcdemo.web.app/
 ├── test-data                   # Test datasets used for heuristic testing
 ├── training-images             # Samples of all secondary image data used in dataset
 │   ...
-│   └── README.txt              # Location to download secondary image data if required 
+│   └── README.txt              # Location to download all secondary image data if required 
 ├── training-videos             # Samples of primary video data collected 
 │   │                           #(participant videos not available due to anonymity requirement)
 │   ├── non-gesture       
@@ -46,13 +46,13 @@ https://metaversenvcdemo.web.app/
 │   ├── raise-hand             
 │   ├── thumbs-up             
 │   └── wave           
-├── training-data               # All landmark datasets created from video and image files
-│   └── dataset                 # Source files (alternatively `lib` or `app`)       
+├── training-data               # 3x Landmark datasets created from video and image files
+│   └── dataset                 # raw output for heuristics, 60 input and 23 input sets
 ├── web-app                     # Web app prototype
 │   └── irp-web-app             # Client directory
-│       ├── build               # built web app (what is deployed to firebase)
+│       ├── build               # built web app (bundle deployed to Firebase)
 │       ├── public              # local public folder with assets and model
-│       │   ├── assets          # hand gesture images used in prototype
+│       │   ├── assets          # hand gesture emoji images used in prototype
 │       │   └── model           # tensorflow.js converted Keras ANN models are here
 │       │       ├── 23-input    
 │       │       └── 60-input    
