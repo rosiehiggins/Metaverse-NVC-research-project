@@ -24,20 +24,22 @@ https://metaversenvcdemo.web.app/
 │   └── participant-docs        # Information sheet and consent form give to participants
 │       └── signed-consent-forms         
 ├── models                      # Saved Keras ANN model files
-│   ├── 23-input                # Model file for 23 input ANN
-│   └── 60-input                # Model file for 60 input ANN
+│   ├── 23-input                
+│   └── 60-input                
 ├── python-scripts              # Contains Python code used for data preprocessing, testing and training models
+│   ...
 │   ├── demos                   # Demos for each hand, face and body pose model tested
 │   └── plots                   # Code to generate plots for results
-├── results                     # csv files containing results from performance evaluation
+├── results                     # Files containing results from performance evaluation
 │   ├── heuristic-results       # confusion matrices with heuristic results
 │   ├── ANN-results             # confusion matrices with ANN results
 │   └── realtime-perf           # JSON containing execution times from protoype testing
 ├── test-data                   # Test datasets used for heuristic testing
 ├── training-images             # Samples of all secondary image data used in dataset
 │   ...
-│   └── README                  # Location to download secondary image data if required 
-├── training-videos             # Samples of primary video data collected (participant videos not available due to anonymity requirement)
+│   └── README.txt              # Location to download secondary image data if required 
+├── training-videos             # Samples of primary video data collected 
+│   │                           #(participant videos not available due to anonymity requirement)
 │   ├── non-gesture       
 │   ├── ok             
 │   ├── raise-hand             
@@ -59,7 +61,7 @@ https://metaversenvcdemo.web.app/
 │           ├── LandmarksHelper.js    # Helper class for calculating hand landmark properties
 │           ├── GestureHeuristics.js  # Contains heuristic calculations and prediction method for heuristics
 │           ├── GestureClassifier.js  # Loads Keras ANN models and runs predictions
-│           └── App.js                # Main app (would hold routes to pages if app expanded)
+│           └── App.js                # Main app (would hold routes to other pages if app expanded)
 └── README.md
 ```
 
