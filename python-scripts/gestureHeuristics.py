@@ -45,7 +45,7 @@ class GestureHeuristics:
 
     '''Predict gesture given landmarks and handeness'''
 
-    def predict(self,landmarks,hand):
+    def predict(self,landmarks,hand,static_only = False):
         #finger states array
         fingerStates = get_finger_states(landmarks)
 
@@ -56,10 +56,9 @@ class GestureHeuristics:
         palmY = get_direction(landmarks[9],landmarks[0])[1]
         thumbTipY = get_direction(landmarks[4],landmarks[3])[1]
 
-        indexTip = np.array([landmarks[8]['x'],landmarks[8]['y'],landmarks[8]['z']])
-        thumbTip = np.array([landmarks[4]['x'],landmarks[4]['y'],landmarks[4]['z']])
-        
         #distance between index and thumb tip
+        indexTip = np.array([landmarks[8]['x'],landmarks[8]['y'],landmarks[8]['z']])
+        thumbTip = np.array([landmarks[4]['x'],landmarks[4]['y'],landmarks[4]['z']])                
         distIT = np.linalg.norm(indexTip-thumbTip)
 
         #x velocity middle finger tip
@@ -69,14 +68,14 @@ class GestureHeuristics:
         mx_velocity = get_x_velocity(middleTip,self.prev_pos,33.33)
         self.prev_pos = middleTip
 
-        #TODO add way flip between static, dynamic or both
+        #Test each heuristic
         if self.isThumbsUp(fingerStates,thumbTipY,knuckleY):
             return "thumbs-up"
         elif self.isRaiseHand(fingerStates,knuckleX,palmY,hand):
             return "raise-hand"
         elif self.isOK(fingerStates,distIT,knuckleX,palmY,hand):
             return "ok"
-        elif self.isWave(fingerStates,mx_velocity,knuckleX,palmY,hand):
+        elif self.isWave(fingerStates,mx_velocity,knuckleX,palmY,hand) and not static_only:
             return "wave"
         else:
             return "non-gesture"

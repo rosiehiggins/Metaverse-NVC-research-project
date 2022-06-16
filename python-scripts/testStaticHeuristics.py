@@ -25,7 +25,7 @@ i= 0
 for hand in X_true:
     landmarks = lm_array_landmarklist(hand[:-1])
     handedness = hand[-1]
-    prediction = gestureHeuristics.predict(landmarks,handedness)   
+    prediction = gestureHeuristics.predict(landmarks,handedness,True)   
     Y_pred.append(prediction)
     i+=1
 
