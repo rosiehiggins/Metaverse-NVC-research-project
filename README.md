@@ -34,8 +34,17 @@ https://metaversenvcdemo.web.app/
 │   ├── ANN-results             # confusion matrices with ANN results
 │   └── realtime-perf           # JSON containing execution times from protoype testing
 ├── test-data                   # Test datasets used for heuristic testing
+├── training-images             # Samples of all secondary image data used in dataset
+│   ...
+│   └── README                  # Location to download secondary image data if required 
+├── training-videos             # Samples of primary video data collected (participant videos not available due to anonymity requirement)
+│   ├── non-gesture       
+│   ├── ok             
+│   ├── raise-hand             
+│   ├── thumbs-up             
+│   └── wave           
 ├── training-data               # All landmark datasets created from video and image files
-│   └── dataset                 # Source files (alternatively `lib` or `app`)    
+│   └── dataset                 # Source files (alternatively `lib` or `app`)       
 ├── web-app                     # Web app prototype
 │   └── irp-web-app             # Client directory
 │       ├── build               # built web app (what is deployed to firebase)
