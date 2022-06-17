@@ -46,7 +46,8 @@ https://metaversenvcdemo.web.app/
 │   ├── raise-hand             
 │   ├── thumbs-up             
 │   └── wave           
-├── training-data               # 3x Landmark datasets created from video and image files
+├── training-data               # Labelled video data and landmark datasets 
+│   ├── labelled-data           # csv files containing labelled frame numbers for each video 
 │   └── dataset                 # raw output for heuristics, 60 input and 23 input sets
 ├── web-app                     # Web app prototype
 │   └── irp-web-app             # Client directory

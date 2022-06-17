@@ -7,7 +7,7 @@ import pandas as pd
 #wave sequences
 #
 #get frame ranges
-fr_wave = map_file_to_ranges(pathname="../training-data/wave_sequences.csv",indexcol="file",\
+fr_wave = map_file_to_ranges(pathname="../training-data/labelled-data/wave_sequences.csv",indexcol="file",\
                                 usecols=["file","wavestart","wavestop","hand","seq"],dtype={'nonstart': int, 'nonstop': int,'hand':str,'seq': int,})
 
 wave_data = get_sequences("../training-videos/wave",fr_wave,norm=False)
@@ -22,7 +22,7 @@ wave_df.to_csv("../training-data/dataset/wave_sequences.csv",index=False)
 #
 #get frame ranges
 
-fr_ng = map_file_to_ranges(pathname="../training-data/nongestures_sequences.csv",indexcol="file",\
+fr_ng = map_file_to_ranges(pathname="../training-data/labelled-data/nongestures_sequences.csv",indexcol="file",\
                                 usecols=["file","nonstart","nonstop","hand","seq"],dtype={'nonstart': int, 'nonstop': int,'hand':str,'seq': int,})
 
 ng_data = get_sequences("../training-videos/non-gesture",fr_ng,norm=False)

@@ -15,7 +15,7 @@ dataset = []
 #non gestures
 #
 #get frame ranges
-frame_ranges_ng = map_file_to_ranges(pathname="../training-data/subset/nongestures.csv",indexcol="file",\
+frame_ranges_ng = map_file_to_ranges(pathname="../training-data/labelled-data/nongestures.csv",indexcol="file",\
                                 usecols=["file","nonstart","nonstop","hand"],dtype={'nonstart': int, 'nonstop': int,'hand':str})
 nongesture_data, nongesture_data60 = get_feature_data("../training-videos/non-gesture",frame_ranges_ng,[0,0,0,1],"nongesture")
 print("non gesture 23")
@@ -41,7 +41,7 @@ print(len(tomas_non_data))
 #
 
 #get frame ranges
-rh_frame_ranges = map_file_to_ranges(pathname="../training-data/subset/raisehand.csv",indexcol="file",\
+rh_frame_ranges = map_file_to_ranges(pathname="../training-data/labelled-data/raisehand.csv",indexcol="file",\
                                 usecols=["file","start","stop","hand"],dtype={'start': int, 'stop': int,'hand':str})
 rh_data, rh_data60 = get_feature_data("../training-videos/raise-hand",rh_frame_ranges,[0,1,0,0],"raisehand")
 print("raise hand video 23")
@@ -61,18 +61,6 @@ print("raise hand samira 23")
 print(len(samira_rh_data))
 print("raise hand samira 60")
 print(len(samira_rh_data60))
-
-#alfredo_rh_data = get_feature_data_from_images("../training-images/alfredo/raise-hand","Left",0.5,[0,1,0,0],"raisehand")
-#print("raise hand alfredo")
-#print(len(alfredo_rh_data))
-
-#ana_rh_data = get_feature_data_from_images("../training-images/ana/raise-hand","Left",0.5,[0,1,0,0],"raisehand")
-#print("raise hand ana")
-#print(len(ana_rh_data))
-
-#ana_m_rh_data = get_feature_data_from_images("../training-images/ana_m/raise-hand","Left",0.5,[0,1,0,0],"raisehand")
-#print("raise hand ana m")
-#print(len(ana_m_rh_data))
 
 arturo_rh_data, arturo_rh_data60 = get_feature_data_from_images("../training-images/arturo/raise-hand","Left",[0,1,0,0],"raisehand")
 print("raise hand arturo 23")
@@ -125,7 +113,7 @@ print(len(madr4_rh_data))
 #thumbs up
 #
 #get frame ranges
-frame_ranges = map_file_to_ranges(pathname="../training-data/subset/thumbsups.csv",indexcol="file",\
+frame_ranges = map_file_to_ranges(pathname="../training-data/labelled-data/thumbsups.csv",indexcol="file",\
                                 usecols=["file","thumbsupstart","thumbsupstop","hand"],dtype={'thumbsupstart': int, 'thumbsupstop': int,'hand':str})
 thumbsup_data, thumbsup_data60  = get_feature_data("../training-videos/thumbs-up",frame_ranges,[1,0,0,0],"thumbsup")
 
@@ -182,7 +170,7 @@ print(len(tomas_tu_data))
 #
 
 #get frame ranges
-ok_frame_ranges = map_file_to_ranges(pathname="../training-data/subset/oks.csv",indexcol="file",\
+ok_frame_ranges = map_file_to_ranges(pathname="../training-data/labelled-data/oks.csv",indexcol="file",\
                                 usecols=["file","start","stop","hand"],dtype={'start': int, 'stop': int,'hand':str})
 ok_data, ok_data60 = get_feature_data("../training-videos/ok",ok_frame_ranges,[0,0,1,0],"ok")
 print("ok video 23")

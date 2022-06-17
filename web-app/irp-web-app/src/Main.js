@@ -199,6 +199,7 @@ class Main extends React.Component {
                     
                     const t0 = performance.now(); 
                     const modelType = this.state.modeltype;
+
                     //run gesture predictions
                     new Promise ((resolve,reject) => {
                         //predict gesture based on chosen model
