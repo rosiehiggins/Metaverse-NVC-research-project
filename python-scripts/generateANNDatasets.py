@@ -248,7 +248,8 @@ sample = balance_dataset_by_min(dataset_df)
 sample = sample.sample(frac = 1,random_state=29)
 sample = sample.drop('class', 1)
 
-sample.to_csv("../training-data/dataset/dataset_multiclass_23f.csv",index=False)
+#sample.to_csv("../training-data/dataset/dataset_multiclass_23f.csv",index=False)
+sample.to_csv("../training-data/dataset/dataset_multiclass_23f_test.csv",index=False)
 
 #
 #balance and save dataset to csv
@@ -273,4 +274,5 @@ sample60 = balance_dataset_by_min(dataset_df_60)
 sample60 = sample60.sample(frac = 1,random_state=29)
 sample60 = sample60.drop('class', 1)
 
-sample60.to_csv("../training-data/dataset/dataset_multiclass_60f.csv",index=False)
+sample60.to_csv("../training-data/dataset/dataset_multiclass_60f_test.csv",index=False)
+#sample60.to_csv("../training-data/dataset/dataset_multiclass_60f.csv",index=False)

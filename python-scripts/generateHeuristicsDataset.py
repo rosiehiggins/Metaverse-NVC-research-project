@@ -241,5 +241,6 @@ sample = balance_dataset_by_min(dataset_df)
 sample = sample.sample(frac = 1,random_state=29)
 sample = sample.drop('class', 1)
 
-sample.to_csv("../training-data/dataset/dataset_multiclass_raw.csv",index=False)
+#sample.to_csv("../training-data/dataset/dataset_multiclass_raw.csv",index=False)
+sample.to_csv("../training-data/dataset/dataset_multiclass_raw_test.csv",index=False)
 

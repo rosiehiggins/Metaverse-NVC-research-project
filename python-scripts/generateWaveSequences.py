@@ -14,7 +14,8 @@ wave_data = get_sequences("../training-videos/wave",fr_wave,norm=False)
 
 wave_df = pd.DataFrame.from_dict(wave_data, orient='index')
 
-wave_df.to_csv("../training-data/dataset/wave_sequences.csv",index=False)
+#wave_df.to_csv("../training-data/dataset/wave_sequences.csv",index=False)
+wave_df.to_csv("../training-data/dataset/wave_sequences_test.csv",index=False)
 
 
 #
@@ -29,4 +30,5 @@ ng_data = get_sequences("../training-videos/non-gesture",fr_ng,norm=False)
 
 ng_df = pd.DataFrame.from_dict(ng_data, orient='index')
 
-ng_df.to_csv("../training-data/dataset/nongesture_sequences.csv",index=False)
+#ng_df.to_csv("../training-data/dataset/nongesture_sequences.csv",index=False)
+ng_df.to_csv("../training-data/dataset/nongesture_sequences_test.csv",index=False)
