@@ -23,8 +23,6 @@ import ResultsQueue from './ResultsQueue';
 import GestureClassifier from './GestureClassifier';
 import GestureHeuristics from './GestureHeuristics';
 
-//useful blog https://itnext.io/accessing-the-webcam-with-javascript-and-react-33cbe92f49cb
-
 class Main extends React.Component {
 
 	constructor(props){	
