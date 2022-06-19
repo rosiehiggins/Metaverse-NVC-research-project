@@ -219,7 +219,6 @@ print(len(tomas_ok_data))
 #
 #balance and save dataset to csv
 #
-#23 features
 seed = 29
 
 dataset = [*raul_ok_data, *samira_ok_data, *ok_data, *arturo_ok_data, *alfredo_ok_data, *ana_ok_data, *ana_m_ok_data, *carlos_c_ok_data, *esther_ok_data, *jesus_ok_data, *raquel_ok_data, *tomas_ok_data,\
