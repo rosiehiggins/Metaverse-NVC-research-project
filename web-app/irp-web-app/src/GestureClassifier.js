@@ -1,10 +1,13 @@
 import * as tf from '@tensorflow/tfjs';
 import LandmarksHelper from './LandmarksHelper';
+//import ModelContext from './ModelContext';
 
 export default class GestureClassifier {
 	
-	constructor(){
-        this.modelLoaded = false;
+    //static contextType = ModelContext; 
+
+	constructor(modelHelper){
+        /*this.modelLoaded = false;
         //load 23 input model
         tf.loadLayersModel('model/23-input/model.json')
         .then((model)=>{
@@ -18,8 +21,9 @@ export default class GestureClassifier {
             this.model60 = model;
             this.model60Loaded = true;
             console.log("model 60 loaded" + this.model60Loaded);
-        })    
+        })    */
         //landmarks helper functions
+        //this.modelHelper = modelHelper;
         this.landmarksHelper = new LandmarksHelper(); 
 	}
 
@@ -153,12 +157,12 @@ export default class GestureClassifier {
             return 0
     }
 
-    predict(landmarks,hand){
-        if(!this.modelLoaded)
-         return Promise.resolve(null);
+    predict(landmarks,hand,model){
+        if(!model)
+            return Promise.resolve(null);
         //return gesture prediction
         let inputTensor = this.convertLandmarksToFeatures(landmarks,hand);
-        let resultTensor = this.model.predict(inputTensor);
+        let resultTensor = model.predict(inputTensor);
         return resultTensor.data()
         .then((result)=>{
            let prediction = Math.max(result[0],result[1],result[2],result[3]);
@@ -171,13 +175,13 @@ export default class GestureClassifier {
         });
     }
 
-    predict60(landmarks,hand){
-        if(!this.model60Loaded)
-        return Promise.resolve(null);
-       //return gesture prediction
-       let inputTensor = this.convertLandmarks(landmarks,hand,9);
-       let resultTensor = this.model60.predict(inputTensor);
-       return resultTensor.data()
+    predict60(landmarks,hand,model){
+        if(!model)
+            return Promise.resolve(null);
+        //return gesture prediction
+        let inputTensor = this.convertLandmarks(landmarks,hand,9);
+        let resultTensor = model.predict(inputTensor);
+        return resultTensor.data()
        .then((result)=>{
            let prediction = Math.max(result[0],result[1],result[2],result[3]);
            //console.log("prediction " + prediction);

@@ -22,8 +22,10 @@ import FPSStats from "react-fps-stats";
 import ResultsQueue from './ResultsQueue';
 import GestureClassifier from './GestureClassifier';
 import GestureHeuristics from './GestureHeuristics';
+import ModelContext from './ModelContext';
 
 class Main extends React.Component {
+    static contextType = ModelContext;
 
 	constructor(props){	
 		super(props);
@@ -79,6 +81,9 @@ class Main extends React.Component {
 	}	
 
     componentDidMount(){
+
+
+
         //get video html element
         let videoRef = this.videoRef.current
         
@@ -161,6 +166,9 @@ class Main extends React.Component {
 
     //Given MediaPipe results predict gesture output
     predictResults(results){
+
+        const modelHelper = this.context;
+
         //get html5 canvas element
         let canvasRef = this.canvasRef.current
         let canvasCtx = canvasRef.getContext('2d');  
@@ -206,10 +214,10 @@ class Main extends React.Component {
                             resolve(prediction)
                         }
                         else if(modelType === "NeuralNetwork"){
-                            resolve(this.GestureClassifier.predict(landmarks,hand))
+                            resolve(this.GestureClassifier.predict(landmarks,hand,modelHelper.getModel23()))
                         }
                         else if(modelType === "NeuralNetwork60"){
-                            resolve(this.GestureClassifier.predict60(landmarks,hand))
+                            resolve(this.GestureClassifier.predict60(landmarks,hand,modelHelper.getModel60()))
                         }
                     })
                     .then((prediction) => {
@@ -297,7 +305,7 @@ class Main extends React.Component {
     //Render UI components
 	render() {		
 		return (
-            <Box sx={{ p: 2, display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+            <Box sx={{ p: "2px", display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
                 <FPSStats  top={10} left={10}/>
                 <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype 👍👌✋👋</Typography>               
                 <div style={{position:'relative', width:"720px", height:"438px", margin:10 ,border: '1px solid grey'}}>
@@ -305,7 +313,7 @@ class Main extends React.Component {
                     <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
                 </div>
                 <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
-                    <Button sx={{mx:1}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide landmarks" : "Show landmarks"}</Button>
+                    <Button sx={{mx:"1px"}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide landmarks" : "Show landmarks"}</Button>
                     <FormControl >
                         <InputLabel id="frame-skip">Frame skip</InputLabel>
                         <Select
@@ -315,7 +323,7 @@ class Main extends React.Component {
                         label="Frame skip"
                         variant="outlined"
                         onChange={(e)=>this.handleUpdateFrameskip(e.target.value)}
-                        sx={{width:100}}
+                        sx={{width:"100px"}}
                         >
                             <MenuItem value={0}>0</MenuItem>
                             <MenuItem value={1}>1</MenuItem>
@@ -340,11 +348,11 @@ class Main extends React.Component {
                         </Select>
                     </FormControl>                    
                     <Box sx={{display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column", }}>
-                        <Typography variant="body" sx={{mx:1}}>Av. hands inference time (ms):</Typography>
-                        <Typography variant="body2" sx={{mx:1}}>{this.state.averageHandsms?this.state.averageHandsms:""}</Typography>
+                        <Typography variant="body" sx={{mx:"1px"}}>Av. hands inference time (ms):</Typography>
+                        <Typography variant="body2" sx={{mx:"1px"}}>{this.state.averageHandsms?this.state.averageHandsms:""}</Typography>
                     </Box>              
                 </Box>
-                <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row",marginTop:2, width:"720px"}}>
+                <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row",mt:"2px", width:"720px"}}>
                     <Box>
                         <Typography variant="body2" sx={{mx:1}}>Left hand prediction: {this.state.leftGesture}</Typography>
                         {this.renderGestureImage(this.state.leftGesture)}
