@@ -18,11 +18,20 @@ import * as camera_utils from '@mediapipe/camera_utils';
 //FPS meter
 import FPSStats from "react-fps-stats";
 
+//Babylon
+import { Vector3, 
+    HemisphericLight, 
+    DirectionalLight,
+    Color4,
+    ArcRotateCamera} from "@babylonjs/core";
+
 //App
 import ResultsQueue from './ResultsQueue';
 import GestureClassifier from './GestureClassifier';
 import GestureHeuristics from './GestureHeuristics';
 import ModelContext from './ModelContext';
+import BabylonSceneComponent from './BabylonSceneComponent';
+import Character from './Character'
 
 class Main extends React.Component {
     static contextType = ModelContext;
@@ -36,6 +45,8 @@ class Main extends React.Component {
             leftGesture:"None",
             rightGesture:"None",
             frameSkip:1,
+            width:720,
+            height:438
         };
 
         //references html video and canvas elements
@@ -45,7 +56,9 @@ class Main extends React.Component {
         //bind UI methods to main class
         this.toggleDisplayLandmarks = this.toggleDisplayLandmarks.bind(this);
         this.handleModelChange = this.handleModelChange.bind(this);
-        this.handleUpdateFrameskip = this.handleUpdateFrameskip.bind(this)
+        this.handleUpdateFrameskip = this.handleUpdateFrameskip.bind(this);
+        this.onSceneReady = this.onSceneReady.bind(this);
+		this.onRender = this.onRender.bind(this);
 
         //buffer to hold results for each hand
         this.resultsQueueLeft = new ResultsQueue(8);
@@ -80,10 +93,12 @@ class Main extends React.Component {
 
 	}	
 
+    componentWillMount(){
+        this.updateDimensions();
+        window.addEventListener("resize", this.updateDimensions.bind(this));
+    }
+
     componentDidMount(){
-
-
-
         //get video html element
         let videoRef = this.videoRef.current
         
@@ -157,12 +172,44 @@ class Main extends React.Component {
             height: 438
         });
 
-        this.camera.start()
+        this.camera.start();
     }
 
     componentWillUnmount(){
         this.camera.stop();
+        window.removeEventListener("resize", this.updateDimensions.bind(this));
     }
+
+    /**
+    * Calculate & Update state of new dimensions
+    */
+    updateDimensions() {
+        if(window.innerWidth < 500) {
+            this.setState({ width: 360, height: 219 });
+        } 
+    }
+
+	onSceneReady(scene) {
+		
+		let DEGTORAD = 0.01745329251; 
+		this.scene = scene; 
+		this.scene.clearColor = new Color4(0, 0, 0, 0);
+		this.camera = new ArcRotateCamera("maincamera", -90* DEGTORAD, 70*DEGTORAD, 3, new Vector3(0, 1, 0), scene);
+        const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);			
+        this.sunlight = new DirectionalLight("sunlight", new Vector3(-0.5, -1, 0), scene);
+        this.sunlight.position = new Vector3(20, 40, 20);
+        this.sunlight.intensity = 0.5
+        //load character asset
+		this.character = new Character(this);
+        this.scene.getEngine().resize();
+	}
+
+    onRender(scene) {
+		if(this.state.assetsLoaded){			
+		}
+		scene.render();
+	}
+
 
     //Given MediaPipe results predict gesture output
     predictResults(results){
@@ -305,25 +352,59 @@ class Main extends React.Component {
     //Render UI components
 	render() {		
 		return (
-            <Box sx={{ p: "2px", display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
-                <FPSStats  top={10} left={10}/>
-                <Typography variant="h5" sx={{mx:1}}>Non verbal communication in 3D virtual worlds prototype 👍👌✋👋</Typography>               
-                <div style={{position:'relative', width:"720px", height:"438px", margin:10 ,border: '1px solid grey'}}>
+            <Box sx={{ position: "relative", display:'flex', height:"100%", justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+                
+                { this.state.width > 500 && <FPSStats  top={10} left={10}/>}
+                
+                <Typography align="center" variant="h5" sx={{m:{xs:"5px",sm:"20px"}}}>Grapevine gestures prototype 👍👌✋👋</Typography>               
+                
+                <Box sx={{display:"flex", flexDirection:{xs:"column",sm:"row"},alignItems:"center"}}>
+                <Box sx={{position:'relative', width:{xs:"360px",sm:"720px"}, height:{xs:"219px",sm:"438px"}, m:"5px", border: '3px solid #333333',borderRadius:"10px"}}>
                     <video ref={this.videoRef} style={{position:'absolute',width:"100%",height:"100%", transform: this.state.selfieMode ? "scale(-1, 1)" : "scale(1,1)"}}/>               
-                    <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
-                </div>
-                <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row", width:"720px", marginTop:1}}>
-                    <Button sx={{mx:"1px"}} onClick = {()=>{this.toggleDisplayLandmarks()}} variant="contained">{this.state.displayLandmarks ? "Hide landmarks" : "Show landmarks"}</Button>
-                    <FormControl >
+                    <canvas ref={this.canvasRef} width={this.state.width} height={this.state.width} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
+                </Box>
+                <Box sx={{
+                        position:"relative",
+                        width:{xs:"360px",sm:"720px"},
+                        height:{xs:"219px",sm:"438px"},
+                        m:"5px",
+                        border: '3px solid #333333',
+                        borderRadius:"10px"}}
+                >
+                    <Box sx={{position: 'absolute',width: '100%', height: '100%',zIndex: -1}}>
+                        <BabylonSceneComponent antialias onSceneReady={this.onSceneReady} onRender={this.onRender} id="my-canvas" />
+                    </Box>
+                </Box>
+                </Box>
+                
+                <Box sx={{
+                        borderStyle:"solid", 
+                        display:'flex',
+                        p:{xs:"2px",sm:"16px"},
+                        borderRadius:"10px",
+                        borderColor:"#333333",
+                        justifyContent:{sm:"center"},
+                        alignItems:{xs:"stretch",sm:"center"},
+                        flexDirection:{xs:"column",sm:"row"}, 
+                        width:{xs:"360px",sm:"1000px"},
+                        m:{xs:"5px",sm:"10px"}}}
+                >
+                    <Button 
+                        sx={{flex:1,m:"5px"}} 
+                        onClick = {()=>{this.toggleDisplayLandmarks()}} 
+                        variant="contained"
+                    >
+                        {this.state.displayLandmarks ? "Hide landmarks" : "Show landmarks"}
+                    </Button>
+                    <FormControl sx={{flex:1, m:"5px"}}>
                         <InputLabel id="frame-skip">Frame skip</InputLabel>
                         <Select
                         labelId="frame-skip"
                         id="frame-skip"
                         value={this.state.frameSkip}
                         label="Frame skip"
-                        variant="outlined"
-                        onChange={(e)=>this.handleUpdateFrameskip(e.target.value)}
-                        sx={{width:"100px"}}
+                        variant="standard"
+                        onChange={(e)=>this.handleUpdateFrameskip(e.target.value)}                       
                         >
                             <MenuItem value={0}>0</MenuItem>
                             <MenuItem value={1}>1</MenuItem>
@@ -332,14 +413,14 @@ class Main extends React.Component {
                             <MenuItem value={4}>4</MenuItem>
                         </Select>
                     </FormControl>  
-                    <FormControl >
+                    <FormControl sx={{flex:1,m:"5px"}}>
                         <InputLabel id="model-select-label">Model type</InputLabel>
                         <Select
                         labelId="model-select-label"
                         id="model-select"
                         value={this.state.modeltype}
                         label="Select model"
-                        variant="outlined"
+                        variant="standard"                        
                         onChange={(e)=>this.handleModelChange(e.target.value)}
                         >
                             <MenuItem value={"Heuristic"}>Heuristic</MenuItem>
@@ -347,12 +428,13 @@ class Main extends React.Component {
                             <MenuItem value={"NeuralNetwork60"}>ANN 60 input</MenuItem>
                         </Select>
                     </FormControl>                    
-                    <Box sx={{display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column", }}>
-                        <Typography variant="body" sx={{mx:"1px"}}>Av. hands inference time (ms):</Typography>
-                        <Typography variant="body2" sx={{mx:"1px"}}>{this.state.averageHandsms?this.state.averageHandsms:""}</Typography>
+                    <Box sx={{flex:1, m:"5px", display:'flex',justifyContent:"center",alignItems:"center",flexDirection:"column", }}>
+                        <Typography variant="body" sx={{}}>Av. hands inference time (ms):</Typography>
+                        <Typography variant="body2" sx={{}}>{this.state.averageHandsms?this.state.averageHandsms:""}</Typography>
                     </Box>              
                 </Box>
-                <Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row",mt:"2px", width:"720px"}}>
+                
+                {/*<Box sx={{display:'flex',justifyContent:"space-around",alignItems:"center",flexDirection:"row",mt:"2px", width:"720px"}}>
                     <Box>
                         <Typography variant="body2" sx={{mx:1}}>Left hand prediction: {this.state.leftGesture}</Typography>
                         {this.renderGestureImage(this.state.leftGesture)}
@@ -362,7 +444,7 @@ class Main extends React.Component {
                         {this.renderGestureImage(this.state.rightGesture,true)}
                     </Box>
                     
-                </Box>
+                </Box>*/}
             </Box>            
         )		
 	}	
