@@ -73,7 +73,11 @@ class Main extends React.Component {
         this.rightHandTimer = null;
         
         //map model outputs to render states
-        this.statesMap = {0:"Thumbs up",1:"Raise hand",2:"OK",3:"None",4:"Wave",5:">:-("};
+        this.statesMap = {0:"thumbsup",1:"raisehand",2:"ok",3:"none",4:"wave",5:"swear"};
+
+        //animation states
+        this.animationState = 3;
+        this.animationStateMap = {0:"idle",1:"raisehandL",2:"idle",3:"idle",4:"waving",5:"idle"};
 
         //hand API
         this.handAPI = {"Left":{
@@ -99,6 +103,8 @@ class Main extends React.Component {
     }
 
     componentDidMount(){
+        const modelHelper = this.context;
+
         //get video html element
         let videoRef = this.videoRef.current
         
@@ -115,11 +121,10 @@ class Main extends React.Component {
         }
         
         //
-        //load MediaPipe Hands model
+        //get MP hands from context
         //
-        this.hands = new mp_hands.Hands({locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-        }});
+        this.hands = modelHelper.getHands();
+
         //configure hands model
         this.hands.setOptions({
             maxNumHands: 2,
@@ -128,6 +133,7 @@ class Main extends React.Component {
             minTrackingConfidence: 0.5,
             selfieMode:true,
         });
+
         //set results call back function
         this.hands.onResults((results)=>{
             //add to benchmarks
@@ -247,6 +253,7 @@ class Main extends React.Component {
                         clearTimeout(this.handAPI[hand].resetTimer);
                     
                     this.handAPI[hand].resetTimer = setTimeout(()=>{
+                            this.setAnimationState(3);
                             this.handAPI[hand].setHandState("None");
                             this.handAPI[hand].resultsQueue.refresh();},500);
                     
@@ -280,7 +287,8 @@ class Main extends React.Component {
                             //set result states to render gesture
                             this.handAPI[hand].resultsQueue.enqueue(prediction);
                             const handstate = this.handAPI[hand].resultsQueue.getResult();
-                            this.handAPI[hand].setHandState(this.statesMap[handstate]);                            
+                            this.handAPI[hand].setHandState(this.statesMap[handstate]);  
+                            this.setAnimationState(handstate);                       
                         }                       
                     })
                     .catch((error)=>{
@@ -304,6 +312,16 @@ class Main extends React.Component {
         
         canvasCtx.restore();
         return
+    }
+
+    setAnimationState(handstate){
+        if(this.animationState != handstate){
+            const anim = this.animationStateMap[handstate];
+            const state = this.statesMap[handstate];
+            this.character.setAnimation(anim);
+            this.character.setEmoteBoard(state);
+            this.animationState = handstate;
+        }
     }
 
     //method to toggle the display of hand landmarks
@@ -355,6 +373,14 @@ class Main extends React.Component {
             <Box sx={{ position: "relative", display:'flex', height:"100%", justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
                 
                 { this.state.width > 500 && <FPSStats  top={10} left={10}/>}
+
+                <Button 
+                    target='_blank' 
+                    href='https://thegrapevine.tech/' 
+                    variant='contained' 
+                    sx={{position:"fixed",bottom:{xs:0,sm:"auto"},top:{sm:"5px"},right:{sm:"5px"},backgroundColor:"#4326B8",'&:hover': {backgroundColor: "#2C119B"}}}>
+                        Try Grapevine!
+                </Button>
                 
                 <Typography align="center" variant="h5" sx={{m:{xs:"5px",sm:"20px"}}}>Grapevine gestures prototype 👍👌✋👋</Typography>               
                 
@@ -390,7 +416,7 @@ class Main extends React.Component {
                         m:{xs:"5px",sm:"10px"}}}
                 >
                     <Button 
-                        sx={{flex:1,m:"5px"}} 
+                        sx={{flex:1,m:"5px",backgroundColor:"#4326B8",'&:hover': {backgroundColor: "#2C119B"}}} 
                         onClick = {()=>{this.toggleDisplayLandmarks()}} 
                         variant="contained"
                     >

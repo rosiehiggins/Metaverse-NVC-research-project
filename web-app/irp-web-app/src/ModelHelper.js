@@ -1,10 +1,20 @@
 
 import * as tf from '@tensorflow/tfjs';
-import GestureClassifier from './GestureClassifier';
+import * as mp_hands from '@mediapipe/hands';
 
 export default class ModelHelper {
 
     constructor() {
+        //
+        //load MediaPipe Hands model
+        //
+        this.hands = new mp_hands.Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+
+        //
+        //Load TF models
+        //
         this.modelLoaded = false;
         this.model60Loaded = false;
         //load 23 input model
@@ -22,6 +32,11 @@ export default class ModelHelper {
             console.log("model 60 loaded" + this.model60Loaded);
         })  
 
+    }
+
+    getHands(){
+        if(this.hands)
+            return this.hands;
     }
 
     getModel60(){
