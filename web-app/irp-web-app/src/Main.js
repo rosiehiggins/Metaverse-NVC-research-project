@@ -33,6 +33,9 @@ import ModelContext from './ModelContext';
 import BabylonSceneComponent from './BabylonSceneComponent';
 import Character from './Character'
 
+//Loading Ring
+import "./LoadingRing.css";
+
 class Main extends React.Component {
     static contextType = ModelContext;
 
@@ -47,7 +50,8 @@ class Main extends React.Component {
             rightGesture:"None",
             frameSkip:1,
             width:720,
-            height:438
+            height:438,
+            loading:true
         };
 
         //references html video and canvas elements
@@ -111,12 +115,12 @@ class Main extends React.Component {
         //
         this.handstimes = [];
 
-        this.benchmarks = {
+        /*this.benchmarks = {
             "MPTimes": [],
             "Heuristic":[],
             "NeuralNetwork":[],
             "NeuralNetwork60":[]
-        }
+        }*/
         
         //
         //get MP hands from context
@@ -137,19 +141,20 @@ class Main extends React.Component {
         this.wasmcounter = 0;
         //set results call back function
         this.hands.onResults((results)=>{
-            /*console.log("hands after loading: "+ JSON.stringify(this.hands));
-            if(this.wasmcounter>1){
+            //console.log("hands after loading: "+ JSON.stringify(this.hands));
+            if(this.wasmcounter<1){
                 this.wasmcounter ++
                 console.log("loaded?");
-            }           */
+                this.setState({loading:false});
+            }           
             //add to benchmarks
-            if(this.t0){
+            /*if(this.t0){
                 const t1 = performance.now();
                 let diff = t1 - this.t0;
                 this.benchmarks["MPTimes"].push(diff)
                 if(this.benchmarks["MPTimes"].length>100)
                     this.benchmarks["MPTimes"].shift();                
-            }    
+            }    */
             //predict results
             this.predictResults(results)
         });
@@ -284,13 +289,13 @@ class Main extends React.Component {
                     .then((prediction) => {
                         if(prediction!==null){
                             //calculate benchmarks
-                            if(t0){
+                            /*if(t0){
                                 const t1 = performance.now();
                                 let diff = t1 - t0;
                                 this.benchmarks[modelType].push(diff);
                                 if(this.benchmarks[modelType].length>100)
                                     this.benchmarks[modelType].shift();
-                            }
+                            }*/
                             //set result states to render gesture
                             this.handAPI[hand].resultsQueue.enqueue(prediction);
                             const handstate = this.handAPI[hand].resultsQueue.getResult();
@@ -353,20 +358,6 @@ class Main extends React.Component {
         this.setState({modeltype:val,availableGestures:availGesturesTxt})
     }
 
-    //select a gesture image to render based on current state
-    renderGestureImage(gesture,flip=false){        
-        let img = (<Box sx={{height:"256px"}}/>);
-        if(gesture==="Thumbs up")
-            img = (<Box component="img" src="./assets/thumbsup.jpg" sx={{transform:((flip) ? "scaleX(-1)" :"")}}/>);
-        else if(gesture==="Raise hand")
-            img = (<Box component="img" src="./assets/raisehand.jpg" sx={{transform:((flip) ? "scaleX(-1)" :"")}}/>);
-        else if(gesture==="OK")
-            img = (<Box component="img" src="./assets/ok.jpg" sx={{ transform:((flip) ? "scaleX(-1)" :"")}}/>);
-        else if(gesture==="Wave")
-            img = (<Box component="img" src="./assets/wave.jpg" sx={{transform:((flip) ? "scaleX(-1)" :"")}}/>);
-        return img;
-    }
-
     //update n frames to be skipped and update length of results queue to reduce latency
     handleUpdateFrameskip(val){
         if(val<2){
@@ -380,12 +371,24 @@ class Main extends React.Component {
         this.setState({frameSkip:val})
     }
 
+
+
     //Render UI components
-	render() {		
+	render() {	
+
 		return (
             <Box sx={{ position: "relative", display:'flex', height:"100%", justifyContent:"center",alignItems:"center",flexDirection:"column"}}>
+
+                {this.state.loading && 
+                 <Box sx={{display:"flex", alignItems:"center", justifyContent:"center",flexDirection:"column", position:"fixed",width:"100%",height:"100%",top:0,left:0,zIndex:10,backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
+                        <Typography align="center" sx={{mb:"20px",color:"#fff"}}>This demo performs best in a well lit room!</Typography>
+						<Box maxWidth="md" sx={{}}>                          
+							<div className="lds-ring"><div></div><div></div><div></div><div></div></div>                           
+						</Box>
+                 </Box>
+                }
                 
-                { this.state.width > 500 && <FPSStats  top={10} left={10}/>}
+                <FPSStats top={"auto"} bottom={0} left={0}/>
 
                 <Button 
                     target='_blank' 
@@ -395,7 +398,7 @@ class Main extends React.Component {
                         Try Grapevine!
                 </Button>
                 
-                <Typography align="center" variant="h5" sx={{m:{xs:"5px",sm:"20px"}}}>Grapevine gestures prototype 👍👌✋👋</Typography>               
+                <Typography align="center" variant="h5" sx={{m:{xs:"5px",sm:"20px"}}}>Grapevine gestures prototype</Typography>               
                 
                 <Box sx={{display:"flex", flexDirection:{xs:"column",sm:"row"},alignItems:"center"}}>
                 <Box sx={{position:'relative', width:{xs:"360px",sm:"720px"}, height:{xs:"219px",sm:"438px"}, m:"5px", border: '3px solid #333',borderRadius:"10px"}}>

@@ -21,16 +21,16 @@ export default class Character{
         //
         //Create emote texture tasks
         //
-        this.thumbsupTask = this.assetsManager.addTextureTask("thumbsuptask", "assets/thumbsup.jpg");
+        this.thumbsupTask = this.assetsManager.addTextureTask("thumbsuptask", "assets/thumbsup.png");
 		this.thumbsupTask.onSuccess = (task) => {this.thumbsupTex = task.texture;}
 
-        this.okTask = this.assetsManager.addTextureTask("oktask", "assets/ok.jpg");
+        this.okTask = this.assetsManager.addTextureTask("oktask", "assets/ok.png");
 		this.okTask.onSuccess = (task) => {this.okTex = task.texture; }
 
-        this.waveTask = this.assetsManager.addTextureTask("wavetask", "assets/wave.jpg");
+        this.waveTask = this.assetsManager.addTextureTask("wavetask", "assets/wave.png");
 		this.waveTask.onSuccess = (task) => {this.waveTex = task.texture; }
 
-        this.raisehandTask = this.assetsManager.addTextureTask("raisehandtask", "assets/raisehand.jpg");
+        this.raisehandTask = this.assetsManager.addTextureTask("raisehandtask", "assets/raisehand.png");
 		this.raisehandTask.onSuccess = (task) => {this.raisehandTex = task.texture; }
 
         //
@@ -122,7 +122,6 @@ export default class Character{
 		let dT = this.app.scene.getEngine().getDeltaTime()/1000;
 
 		if(this.transitioning){
-			console.log("transitioning")
 			if (this.transitionCounter<1){
 				this.transitionCounter += dT * this.transitionSpeed;
 				const weightTo = Math.max(0 + this.transitionCounter,1);
