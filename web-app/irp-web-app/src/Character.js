@@ -1,19 +1,22 @@
 import { SceneLoader, Image, AssetsManager, Vector3, Color3, DynamicTexture, 
     Mesh, AbstractMesh, StandardMaterial, 
-    TransformNode, MeshBuilder} from "@babylonjs/core";
+    TransformNode, MeshBuilder, CurrentScreenBlock} from "@babylonjs/core";
 
 import "@babylonjs/loaders/glTF";
 
+
 export default class Character{
 
-    constructor(app){
+    constructor(app, onCharacterLoaded){
 
         this.app = app;
+
         
         //
 		//Create the asset manager
 		//		
         this.assetsManager = new AssetsManager(this.app.scene);
+		this.assetsManager.useDefaultLoadingScreen = false;
 
         //
         //Create emote texture tasks
@@ -38,34 +41,14 @@ export default class Character{
 
         this.eyesClosedTask = this.assetsManager.addTextureTask("eyesClosedTask", "assets/charEyeClosed.png",false,false);
 		this.eyesClosedTask.onSuccess = (task) => {this.eyesClosedTex = task.texture;}
-
-        /*this.characterModelTask = this.assetsManager.addContainerTask("characterModelTask", "", "assets/", "character.glb"); 
-        this.characterModelTask.onSuccess = (task) => {
-            this.characterModelPrefab = (task.loadedContainer); 
-        }
-        this.characterModelTask.onError = (task, message, exception) => { console.log(message, exception); }*/
         
         //Import character meshes
         SceneLoader.ImportMeshAsync("", "assets/", "character.glb", this.app.scene)
         .then((characterMeshes)=>{
             this.characterModel = characterMeshes;
             console.log(characterMeshes);
-            
-            //create a weight for each animation
-		    /*this.animWeights = {}; 
-            //set anim to idle initially
-		    for(let group of characterMeshes.animationGroups){
-                console.log(group.name)
-                if(group.name === "idle"){
-                    this.animWeights[group.name] = 0; 
-                    //group.setWeightForAllAnimatables(1);
-                }
-                else{
-                    this.animWeights[group.name] = 0; 
-                    //group.setWeightForAllAnimatables(0); 
-                }			        			    
-		    }*/
-            //start character blinking
+			
+			this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == "idle"});
             this.startBlink()
 
             //create emote pivot
@@ -73,7 +56,11 @@ export default class Character{
             this.emoteBillboardPivot.position.y = 1.9; 
             this.emoteBillboardPivot.parent = characterMeshes[0]; 
 
+			onCharacterLoaded();
+
         })
+
+		this.transitioning = false;
 
         //load textures with asset manager
         this.assetsManager.load();
@@ -95,6 +82,7 @@ export default class Character{
 				if(!group.isPlaying){
 					group.reset(); 
 					group.play(true); 
+					this.currentAnim = group;
 				}
 			}
 			else{
@@ -106,35 +94,50 @@ export default class Character{
 		
 		if(!found){
 			console.log("Problem: could not find animation named:" + name); 
-			console.log(this.characterModel.animationGroups);
 		}
 		
 	}
 
-    //
-	//Sets the blending between animations
-	//
-	blendToAnimation(name, speed){
+	transitionAnimation(name,speed=1,onExit){
+
 		
+		this.prevAnim = this.currentAnim;
+
+		this.currentAnim.play(true);
+
+		this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == name})
+
+		this.transitioning = true;
+
+		this.transitionSpeed = speed;
+
+		this.transitionCounter = 0;
+
+		this.onExitTransition = onExit;
+
+	}
+
+	//update loop for character
+	update(){
 		let dT = this.app.scene.getEngine().getDeltaTime()/1000;
 
-		for(let group of this.characterModel.animationGroups){
-			//make sure they are all playing
-            if(!group.isPlaying){
-                group.play();
-            }						
-			//if this it the one..
-			if(group.name === name){
-				this.animWeights[group.name] += speed * dT;
-				this.animWeights[group.name] = Math.min(Math.max( this.animWeights[group.name] , 0), 1);
-				group.setWeightForAllAnimatables(this.animWeights[group.name]); 
+		if(this.transitioning){
+			console.log("transitioning")
+			if (this.transitionCounter<1){
+				this.transitionCounter += dT * this.transitionSpeed;
+				const weightTo = Math.max(0 + this.transitionCounter,1);
+				const weightFrom = Math.max(1 - this.transitionCounter,0);
+				this.prevAnim.setWeightForAllAnimatables(weightFrom);
+				this.currentAnim.setWeightForAllAnimatables(weightTo);				
 			}
-            else{
-				this.animWeights[group.name] -= speed * dT;
-				this.animWeights[group.name] = Math.min(Math.max( this.animWeights[group.name] , 0), 1);
-				group.setWeightForAllAnimatables(this.animWeights[group.name]);  
+			else{
+				this.transitioning = false;
+				if(this.onExitTransition){
+					this.onExitTransition()
+				}
 			}
-		}
+				
+		}		
 	}
 
     setEmoteBoard(name){
@@ -203,9 +206,9 @@ export default class Character{
 			//Run blink animation
 			let RandomInRange = (min, max) => {return (Math.random() * (max - min) ) + min; };
 			this.blinkTimer = setInterval(()=>{				
-				this.faceMesh._material.albedoTexture = this.eyesClosedTex;				
+				this.faceMesh.material.albedoTexture= this.eyesClosedTex;				
 				setTimeout(()=>{				
-					this.faceMesh._material.albedoTexture = this.eyesOpenTex;					
+					this.faceMesh.material.albedoTexture = this.eyesOpenTex;					
 				}, 200);
 			}, RandomInRange(3000, 6000) ); 
 			

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babylonjs/core": "^4.2.2",
-    "@babylonjs/loaders": "^4.2.2",
+    "@babylonjs/core": "^5.19.0",
+    "@babylonjs/loaders": "^5.19.0",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@mediapipe/camera_utils": "^0.3.1640029074",
