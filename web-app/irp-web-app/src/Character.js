@@ -1,4 +1,4 @@
-import { SceneLoader, Image, AssetsManager, Vector3, Color3, DynamicTexture, 
+import { SceneLoader, AssetsManager, Color3, 
     Mesh, AbstractMesh, StandardMaterial, 
     TransformNode, MeshBuilder, CurrentScreenBlock} from "@babylonjs/core";
 
@@ -103,9 +103,9 @@ export default class Character{
 		
 		this.prevAnim = this.currentAnim;
 
-		this.currentAnim.play(true);
+		this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == name});
 
-		this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == name})
+		this.currentAnim.play(true);
 
 		this.transitioning = true;
 
@@ -195,7 +195,6 @@ export default class Character{
 	startBlink(){			
 		
 		this.faceMesh = this.characterModel.meshes.find((el)=>{return el.name == "head"})
-        console.log(this.faceMesh);
 		
 		if(this.faceMesh){
 			//clear timers if already running

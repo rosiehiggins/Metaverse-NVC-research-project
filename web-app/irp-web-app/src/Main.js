@@ -44,8 +44,8 @@ class Main extends React.Component {
 		this.state = {
             displayLandmarks:false,
             selfieMode:true,
-            modeltype:"Heuristic",
-            availableGestures:"Gestures: 👍👌✋👋",
+            modeltype:"NeuralNetwork60",
+            availableGestures:"Gestures: 👍👌✋",
             leftGesture:"None",
             rightGesture:"None",
             frameSkip:1,
@@ -83,7 +83,7 @@ class Main extends React.Component {
         //animation states
         this.currentAnim= 3;
         this.animationState = "running";
-        this.animationStateMap = {0:"idle",1:"raisehandL",2:"idle",3:"idle",4:"waving",5:"idle"};
+        this.animationStateMap = {0:"jump",1:"raisehandL",2:"jump",3:"idle",4:"waving",5:"idle"};
 
         //hand API
         this.handAPI = {"Left":{
@@ -138,13 +138,11 @@ class Main extends React.Component {
 
         //console.log("hands before loading: "+ JSON.stringify(this.hands));
 
-        this.wasmcounter = 0;
+        const wasmcounter = 0;
         //set results call back function
         this.hands.onResults((results)=>{
-            //console.log("hands after loading: "+ JSON.stringify(this.hands));
-            if(this.wasmcounter<1){
-                this.wasmcounter ++
-                console.log("loaded?");
+            if(wasmcounter<1){
+                wasmcounter ++
                 this.setState({loading:false});
             }           
             //add to benchmarks
