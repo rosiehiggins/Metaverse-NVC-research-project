@@ -37,7 +37,7 @@ export default class Character{
         //Create face texture tasks (for blink)
         //
         this.eyesOpenTask = this.assetsManager.addTextureTask("eyesOpenTask", "assets/charEyeOpen.png",false,false);
-		this.eyesOpenTask.onSuccess = (task) => {this.eyesOpenTex = task.texture; console.log(this.eyesOpenTex)}
+		this.eyesOpenTask.onSuccess = (task) => {this.eyesOpenTex = task.texture;}
 
         this.eyesClosedTask = this.assetsManager.addTextureTask("eyesClosedTask", "assets/charEyeClosed.png",false,false);
 		this.eyesClosedTask.onSuccess = (task) => {this.eyesClosedTex = task.texture;}
@@ -46,10 +46,10 @@ export default class Character{
         SceneLoader.ImportMeshAsync("", "assets/", "character.glb", this.app.scene)
         .then((characterMeshes)=>{
             this.characterModel = characterMeshes;
-            console.log(characterMeshes);
 			
 			this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == "idle"});
-            this.startBlink()
+			this.currentAnim.play(true);
+            this.startBlink();
 
             //create emote pivot
             this.emoteBillboardPivot = new TransformNode("emote pivot", this.app.scene);
@@ -59,6 +59,8 @@ export default class Character{
 			onCharacterLoaded();
 
         })
+
+		this.animationState = "running";
 
 		this.transitioning = false;
 
@@ -98,30 +100,33 @@ export default class Character{
 		
 	}
 
-	transitionAnimation(name,speed=1,onExit){
+	setAnimationState(state){
+		this.animationState = state;
+	}
 
-		
+	startAnimationTransition(name,speed=1,closeEyes=false){
+		//console.log("transition animation " + name);
 		this.prevAnim = this.currentAnim;
 
 		this.currentAnim = this.characterModel.animationGroups.find((el)=>{return el.name == name});
 
 		this.currentAnim.play(true);
 
-		this.transitioning = true;
-
 		this.transitionSpeed = speed;
 
 		this.transitionCounter = 0;
 
-		this.onExitTransition = onExit;
-
+		if(closeEyes){
+			this.closeEyes();
+			this.eyesClosed = true;
+		}
 	}
 
 	//update loop for character
 	update(){
 		let dT = this.app.scene.getEngine().getDeltaTime()/1000;
 
-		if(this.transitioning){
+		if(this.animationState === "transitioning"){
 			if (this.transitionCounter<1){
 				this.transitionCounter += dT * this.transitionSpeed;
 				const weightTo = Math.max(0 + this.transitionCounter,1);
@@ -130,12 +135,12 @@ export default class Character{
 				this.currentAnim.setWeightForAllAnimatables(weightTo);				
 			}
 			else{
-				this.transitioning = false;
-				if(this.onExitTransition){
-					this.onExitTransition()
+				if(this.prevAnim.name === "agreement" && (this.prevAnim.name !== this.currentAnim.name)){
+					this.faceMesh.material.albedoTexture= this.eyesOpenTex;
+					this.startBlink();
 				}
-			}
-				
+				this.setAnimationState("running");
+			}				
 		}		
 	}
 
@@ -212,6 +217,17 @@ export default class Character{
 			
 		}
 		 		
+	}
+
+	closeEyes(){
+		if(!this.faceMesh)
+			this.faceMesh = this.characterModel.meshes.find((el)=>{return el.name == "head"});
+		
+		//clear blink timer
+		if(typeof this.blinkTimer !== "undefined")
+			clearInterval(this.blinkTimer); 
+
+		this.faceMesh.material.albedoTexture= this.eyesClosedTex;
 	}
    
 

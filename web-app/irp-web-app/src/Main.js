@@ -25,6 +25,9 @@ import { Vector3,
     Color4,
     ArcRotateCamera} from "@babylonjs/core";
 
+//Is
+import is from 'is_js'
+
 //App
 import ResultsQueue from './ResultsQueue';
 import GestureClassifier from './GestureClassifier';
@@ -42,15 +45,13 @@ class Main extends React.Component {
 	constructor(props){	
 		super(props);
 		this.state = {
-            displayLandmarks:false,
+            displayLandmarks:true,
             selfieMode:true,
             modeltype:"NeuralNetwork60",
             availableGestures:"Gestures: 👍👌✋",
             leftGesture:"None",
             rightGesture:"None",
             frameSkip:1,
-            width:720,
-            height:438,
             loading:true
         };
 
@@ -81,9 +82,7 @@ class Main extends React.Component {
         this.statesMap = {0:"thumbsup",1:"raisehand",2:"ok",3:"none",4:"wave",5:"swear"};
 
         //animation states
-        this.currentAnim= 3;
-        this.animationState = "running";
-        this.animationStateMap = {0:"jump",1:"raisehandL",2:"jump",3:"idle",4:"waving",5:"idle"};
+        this.currentAnimHandstate = 3;
 
         //hand API
         this.handAPI = {"Left":{
@@ -114,13 +113,6 @@ class Main extends React.Component {
         //Real time performance variables
         //
         this.handstimes = [];
-
-        /*this.benchmarks = {
-            "MPTimes": [],
-            "Heuristic":[],
-            "NeuralNetwork":[],
-            "NeuralNetwork60":[]
-        }*/
         
         //
         //get MP hands from context
@@ -129,30 +121,20 @@ class Main extends React.Component {
 
         //configure hands model
         this.hands.setOptions({
-            maxNumHands: 2,
+            maxNumHands: 1,
             modelComplexity: 1,
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5,
             selfieMode:true,
         });
 
-        //console.log("hands before loading: "+ JSON.stringify(this.hands));
-
-        const wasmcounter = 0;
+        let wasmcounter = 0;
         //set results call back function
         this.hands.onResults((results)=>{
             if(wasmcounter<1){
-                wasmcounter ++
+                wasmcounter ++;
                 this.setState({loading:false});
             }           
-            //add to benchmarks
-            /*if(this.t0){
-                const t1 = performance.now();
-                let diff = t1 - this.t0;
-                this.benchmarks["MPTimes"].push(diff)
-                if(this.benchmarks["MPTimes"].length>100)
-                    this.benchmarks["MPTimes"].shift();                
-            }    */
             //predict results
             this.predictResults(results)
         });
@@ -192,16 +174,6 @@ class Main extends React.Component {
 
     componentWillUnmount(){
         this.camera.stop();
-        //window.removeEventListener("resize", this.updateDimensions.bind(this));
-    }
-
-    /**
-    * Calculate & Update state of new dimensions
-    */
-    updateDimensions() {
-        if(window.innerWidth < 500) {
-            this.setState({ width: 360, height: 219 });
-        } 
     }
 
 	onSceneReady(scene) {
@@ -214,6 +186,7 @@ class Main extends React.Component {
         this.sunlight = new DirectionalLight("sunlight", new Vector3(-0.5, -1, 0), scene);
         this.sunlight.position = new Vector3(20, 40, 20);
         this.sunlight.intensity = 0.5
+        
         //load character asset
 		this.character = new Character(this,()=>{this.setState({assetsLoaded:true})});
         this.scene.getEngine().resize();
@@ -286,19 +259,11 @@ class Main extends React.Component {
                     })
                     .then((prediction) => {
                         if(prediction!==null){
-                            //calculate benchmarks
-                            /*if(t0){
-                                const t1 = performance.now();
-                                let diff = t1 - t0;
-                                this.benchmarks[modelType].push(diff);
-                                if(this.benchmarks[modelType].length>100)
-                                    this.benchmarks[modelType].shift();
-                            }*/
                             //set result states to render gesture
                             this.handAPI[hand].resultsQueue.enqueue(prediction);
                             const handstate = this.handAPI[hand].resultsQueue.getResult();
                             this.handAPI[hand].setHandState(this.statesMap[handstate]);  
-                            this.setAnimationState(handstate);                       
+                            this.setAnimationState(handstate,hand);                       
                         }                       
                     })
                     .catch((error)=>{
@@ -324,17 +289,40 @@ class Main extends React.Component {
         return
     }
 
-    setAnimationState(handstate){
-        if(this.currentAnim !== handstate){
-            const anim = this.animationStateMap[handstate];
-            const state = this.statesMap[handstate];
-            this.character.setEmoteBoard(state);
-            if(this.animationState==="running"){
-                this.animationState="transitioning"
-                this.character.transitionAnimation(anim,5,()=>{this.animationState="running"});  
-            }                    
-            this.currentAnim= handstate;
-        }
+    //set animation name based on state and hand
+    setAnimName(handState,hand){
+        if(handState===0)
+            return "jump";
+        else if(handState === 1 && hand === "Right")
+            return "raisehandL";
+        else if(handState === 1 && hand === "Left")
+            return "raisehandR";  
+        else if(handState === 1 && hand === "none")
+            return "raisehandL";      
+        else if(handState === 2)
+            return "agreement";  
+        else if(handState === 3)
+            return "idle";    
+        else if(handState === 4 && hand === "Right")
+            return "wavingL"; 
+        else if(handState === 4 && hand === "Left")
+            return "wavingR"; 
+        else if(handState === 4 && hand === "none")
+            return "wavingR"; 
+        else if(handState === 5)
+            return "idle";  
+    }
+
+    //set animation state of character
+    setAnimationState(handstate,hand="none"){
+        const anim = this.setAnimName(handstate,hand)
+        const state = this.statesMap[handstate];
+        this.character.setEmoteBoard(state);
+        const closeEyes = handstate === 2 ? true : false;
+        if(this.character.animationState === "running"){
+            this.character.setAnimationState("transitioning");
+            this.character.startAnimationTransition(anim,5,closeEyes);  
+        }                    
     }
 
     //method to toggle the display of hand landmarks
@@ -379,7 +367,8 @@ class Main extends React.Component {
 
                 {this.state.loading && 
                  <Box sx={{display:"flex", alignItems:"center", justifyContent:"center",flexDirection:"column", position:"fixed",width:"100%",height:"100%",top:0,left:0,zIndex:10,backgroundColor:"rgba(0, 0, 0, 0.8)"}}>
-                        <Typography align="center" sx={{mb:"20px",color:"#fff"}}>This demo performs best in a well lit room!</Typography>
+                        <Typography align="center" sx={{mb:"10px",color:"#fff"}}>Make sure you have a web cam connected!</Typography>
+                        <Typography align="center" sx={{mb:"25px",color:"#fff"}}>This demo performs best in a well lit room!</Typography>
 						<Box maxWidth="md" sx={{}}>                          
 							<div className="lds-ring"><div></div><div></div><div></div><div></div></div>                           
 						</Box>
@@ -399,14 +388,14 @@ class Main extends React.Component {
                 <Typography align="center" variant="h5" sx={{m:{xs:"5px",sm:"20px"}}}>Grapevine gestures prototype</Typography>               
                 
                 <Box sx={{display:"flex", flexDirection:{xs:"column",sm:"row"},alignItems:"center"}}>
-                <Box sx={{position:'relative', width:{xs:"360px",sm:"720px"}, height:{xs:"219px",sm:"438px"}, m:"5px", border: '3px solid #333',borderRadius:"10px"}}>
+                <Box sx={{position:'relative', width:{xs:"219px",sm:"420px",lg:"720px"}, height:{xs:"360px",sm:"256px",lg:"438px"}, m:"5px", border: '3px solid #333',borderRadius:"10px"}}>
                     <video ref={this.videoRef} style={{position:'absolute',width:"100%",height:"100%", transform: this.state.selfieMode ? "scale(-1, 1)" : "scale(1,1)"}}/>               
-                    <canvas ref={this.canvasRef} width={this.state.width} height={this.state.width} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
+                    <canvas ref={this.canvasRef} width={720} height={438} style={{position:'absolute',width:"100%",height:"100%"}}/>                   
                 </Box>
                 <Box sx={{
                         position:"relative",
-                        width:{xs:"360px",sm:"720px"},
-                        height:{xs:"219px",sm:"438px"},
+                        width:{xs:"360px",sm:"420px",lg:"720px"},
+                        height:{xs:"219px",sm:"256px",lg:"438px"},
                         m:"5px",
                         border: '3px solid #333333',
                         borderRadius:"10px"}}
@@ -425,6 +414,34 @@ class Main extends React.Component {
                         <Typography sx={{ml:"5px",color:"#fff"}}>{this.state.availableGestures}</Typography>
 
                     </Box>
+                    <Box sx={{
+                            display:"flex",
+                            alignItems:"center",
+                            position:"absolute",
+                            top:0,
+                            left:0,
+                            backgroundColor:"#333",
+                            width: "150px",
+                            height:"25px",
+                            borderRadius:"0px 0px 5px 0px"}}
+                    >
+                        <Typography sx={{ml:"5px",color:"#fff"}}>Left:{this.state.leftGesture}</Typography>
+
+                    </Box>
+                    <Box sx={{
+                            display:"flex",
+                            alignItems:"center",
+                            position:"absolute",
+                            top:0,
+                            right:0,
+                            backgroundColor:"#333",
+                            width: "150px",
+                            height:"25px",
+                            borderRadius:"0px 0px 0px 5px"}}
+                    >
+                        <Typography sx={{ml:"5px",color:"#fff"}}>Right:{this.state.rightGesture}</Typography>
+
+                    </Box>
                     <Box sx={{position: 'absolute',width: '100%', height: '100%',zIndex: -1}}>
                         <BabylonSceneComponent antialias onSceneReady={this.onSceneReady} onRender={this.onRender} id="my-canvas" />
                     </Box>
@@ -437,11 +454,11 @@ class Main extends React.Component {
                         p:{xs:"2px",sm:"16px"},
                         borderRadius:"10px",
                         borderColor:"#333333",
-                        justifyContent:{sm:"center"},
-                        alignItems:{xs:"stretch",sm:"center"},
-                        flexDirection:{xs:"column",sm:"row"}, 
-                        width:{xs:"360px",sm:"1000px"},
-                        m:{xs:"5px",sm:"10px"}}}
+                        justifyContent:{md:"center"},
+                        alignItems:{xs:"stretch",md:"center"},
+                        flexDirection:{xs:"column",md:"row"}, 
+                        width:{xs:"360px",md:"720px"},
+                        m:{xs:"5px",md:"10px"}}}
                 >
                     <Button 
                         sx={{flex:1,m:"5px",backgroundColor:"#4326B8",'&:hover': {backgroundColor: "#2C119B"}}} 

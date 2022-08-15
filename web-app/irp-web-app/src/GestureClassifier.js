@@ -1,29 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
 import LandmarksHelper from './LandmarksHelper';
-//import ModelContext from './ModelContext';
 
 export default class GestureClassifier {
 	
-    //static contextType = ModelContext; 
-
-	constructor(modelHelper){
-        /*this.modelLoaded = false;
-        //load 23 input model
-        tf.loadLayersModel('model/23-input/model.json')
-        .then((model)=>{
-            this.model = model;
-            this.modelLoaded = true;
-            console.log("model 23 loaded" + this.modelLoaded );
-        })    
-        //load 60 input model
-        tf.loadLayersModel('model/60-input/model.json')
-        .then((model)=>{
-            this.model60 = model;
-            this.model60Loaded = true;
-            console.log("model 60 loaded" + this.model60Loaded);
-        })    */
-        //landmarks helper functions
-        //this.modelHelper = modelHelper;
+	constructor(){
         this.landmarksHelper = new LandmarksHelper(); 
 	}
 
