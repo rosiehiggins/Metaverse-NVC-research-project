@@ -18,11 +18,7 @@ https://metaversenvcdemo.web.app/
 
 ```
 .
-├── demo-video                  # Prototype demo video
-├── ethics-documents            
-│   ├── fast-track-ethics-form  # Signed fast-track ethics form
-│   └── participant-docs        # Information sheet and consent form give to participants
-│       └── signed-consent-forms         
+├── demo-video                  # Prototype demo video      
 ├── models                      # Saved Keras ANN model files
 │   ├── 23-input                
 │   └── 60-input                
